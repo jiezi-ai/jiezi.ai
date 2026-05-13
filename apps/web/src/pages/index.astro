@@ -1,21 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
-
-const API_BASE = import.meta.env.PUBLIC_API_URL || "http://localhost:8787";
-
-let overview = null;
-let budget = null;
-
-try {
-  const [overviewRes, budgetRes] = await Promise.all([
-    fetch(`${API_BASE}/api/overview`),
-    fetch(`${API_BASE}/api/budget`),
-  ]);
-  if (overviewRes.ok) overview = await overviewRes.json();
-  if (budgetRes.ok) budget = await budgetRes.json();
-} catch {
-  // API not available, render with placeholder data
-}
+import Stats from "../components/Stats";
+import Ledger from "../components/Ledger";
 ---
 
 <Base>
@@ -49,45 +35,8 @@ try {
       </p>
     </section>
 
-    <!-- Stats -->
-    <section class="mb-24 border-y-2 border-ink">
-      <!-- Batch progress -->
-      <div class="py-6">
-        <div class="flex justify-between items-baseline mb-4">
-          <span class="font-mono text-sm text-ink-muted">资助进度</span>
-          <span class="font-mono text-sm text-ink-muted">每批 100 人 · 共 600 人</span>
-        </div>
-        <div class="grid grid-cols-6 gap-2">
-          {(overview?.batches ?? Array.from({length: 6}, (_, i) => ({id: i+1, status: "preparing", approved: 0}))).map((batch: any) => (
-            <div class={`text-center py-3 border ${batch.status === 'open' ? 'border-vermillion bg-vermillion/[0.05]' : batch.status === 'closed' ? 'border-ink bg-ink/[0.04]' : 'border-border'}`}>
-              <p class="font-mono text-lg font-bold tabular-nums">{batch.approved || 0}<span class="text-ink-muted font-normal text-xs">/100</span></p>
-              <p class="text-[10px] font-mono text-ink-muted mt-0.5">第 {batch.id} 批</p>
-              <p class={`text-[10px] font-mono mt-0.5 ${batch.status === 'open' ? 'text-vermillion' : batch.status === 'closed' ? 'text-ink' : 'text-ink-muted'}`}>
-                {batch.status === 'open' ? '申请中' : batch.status === 'closed' ? '已结束' : '筹备中'}
-              </p>
-            </div>
-          ))}
-        </div>
-        <p class="text-xs text-ink-muted mt-3">每人获得 1 个月 AI Coding Plan，支持 Claude Code、Cline 等主流编程工具</p>
-      </div>
-
-      <!-- Budget progress -->
-      <div class="py-5 border-t border-border">
-        <div class="flex justify-between items-baseline mb-2">
-          <span class="font-mono text-sm text-ink-muted">预算</span>
-          <span class="font-mono text-sm">
-            <span class="text-vermillion font-bold">{budget ? Math.round(budget.spent).toLocaleString() : "0"}</span>
-            <span class="text-ink-muted"> / {budget?.committed?.toLocaleString() ?? "150,000"} CNY</span>
-          </span>
-        </div>
-        <div class="w-full h-1.5 bg-ink/[0.06] overflow-hidden">
-          <div
-            class="h-full bg-vermillion transition-all duration-500"
-            style={`width: ${budget ? Math.max((budget.spent / budget.committed) * 100, 0.5) : 0.5}%`}
-          ></div>
-        </div>
-      </div>
-    </section>
+    <!-- Stats (client-side, fetches from API) -->
+    <Stats client:load />
 
     <!-- Why -->
     <section class="mb-24">
@@ -319,21 +268,8 @@ try {
         </div>
       </div>
 
-      <div class="mt-12 bg-ink/[0.02] p-6 font-mono text-sm border border-border/50">
-        <div class="flex justify-between items-baseline mb-3">
-          <span class="text-ink-muted">承诺注资</span>
-          <span class="tabular-nums font-medium">{budget?.committed?.toLocaleString() ?? "150,000"} CNY</span>
-        </div>
-        <div class="flex justify-between items-baseline mb-3">
-          <span class="text-ink-muted">已支出</span>
-          <span class="tabular-nums font-medium">{budget ? Math.round(budget.spent).toLocaleString() : "0"} CNY</span>
-        </div>
-        <div class="flex justify-between items-baseline border-t border-ink/10 pt-3 mt-3">
-          <span class="font-bold">余额</span>
-          <span class="font-bold tabular-nums text-lg text-vermillion">{budget ? Math.round(budget.remaining).toLocaleString() : "150,000"} CNY</span>
-        </div>
-        <p class="text-[10px] text-ink-muted mt-4 uppercase tracking-widest">数据来自 beancount 账本，每日更新</p>
-      </div>
+      <!-- Ledger (client-side, fetches from API) -->
+      <Ledger client:load />
     </section>
 
     <!-- Footer -->
