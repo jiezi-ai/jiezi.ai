@@ -7,9 +7,12 @@ const app = new Hono<{ Bindings: Env }>();
 
 app.get("/", async (c) => {
   const { github, cache } = c.var;
+  const refresh = c.req.query("refresh") === "true";
 
-  const cached = await cache.get<BudgetReport>("budget");
-  if (cached) return c.json(cached);
+  if (!refresh) {
+    const cached = await cache.get<BudgetReport>("budget");
+    if (cached) return c.json(cached);
+  }
 
   const [mainBc, yearBc] = await Promise.all([
     github.getFile("ledger/main.beancount"),

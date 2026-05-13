@@ -9,6 +9,7 @@ interface ParsedTransaction {
     account: string;
     amount: number;
     currency: string;
+    totalCost?: { amount: number; currency: string };
   }>;
 }
 
@@ -37,14 +38,21 @@ export function parseBeancount(content: string): ParsedTransaction[] {
         const postingLine = lines[i].trim();
         if (postingLine.startsWith(";") || postingLine.includes(":")) {
           const postingMatch = postingLine.match(
-            /^(\S+(?::\S+)+)\s+(-?[\d,.]+)\s+(\w+)/,
+            /^(\S+(?::\S+)+)\s+(-?[\d,.]+)\s+(\w+)(?:\s+@@\s+(-?[\d,.]+)\s+(\w+))?/,
           );
           if (postingMatch) {
-            tx.postings.push({
+            const posting: (typeof tx.postings)[number] = {
               account: postingMatch[1],
               amount: parseFloat(postingMatch[2].replace(",", "")),
               currency: postingMatch[3],
-            });
+            };
+            if (postingMatch[4] && postingMatch[5]) {
+              posting.totalCost = {
+                amount: parseFloat(postingMatch[4].replace(",", "")),
+                currency: postingMatch[5],
+              };
+            }
+            tx.postings.push(posting);
           } else {
             const metaMatch = postingLine.match(/^(\w+):/);
             if (!metaMatch || postingLine.match(/^(\S+(?::\S+){2,})/)) {
@@ -100,8 +108,11 @@ export function generateReport(
 
       if (posting.account.startsWith("Expenses:")) {
         const parts = posting.account.split(":");
-        const amount =
-          posting.currency === "USD" ? posting.amount * 7.2 : posting.amount;
+        const amount = posting.totalCost
+          ? posting.totalCost.amount
+          : posting.currency === "USD"
+            ? posting.amount * 7.2
+            : posting.amount;
 
         spent += amount;
 

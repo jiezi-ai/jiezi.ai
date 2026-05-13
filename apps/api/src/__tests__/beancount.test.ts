@@ -64,11 +64,10 @@ describe("generateReport", () => {
 
   it("calculates total spent across all expenses", () => {
     const report = generateReport(SAMPLE_MAIN, SAMPLE_YEAR);
-    // 域名: 185.96 USD * 7.2 = 1338.912 ≈ 1338.91
+    // 域名: 185.96 USD @@ 1339 CNY
     // Coding Plan: 9800 CNY
-    // Total: ~11138.91
-    expect(report.spent).toBeGreaterThan(11000);
-    expect(report.spent).toBeLessThan(11200);
+    // Total: 11139
+    expect(report.spent).toBe(11139);
   });
 
   it("calculates remaining = committed - spent", () => {
@@ -79,7 +78,7 @@ describe("generateReport", () => {
   it("groups expenses by stage", () => {
     const report = generateReport(SAMPLE_MAIN, SAMPLE_YEAR);
     expect(report.byStage["Stage1"]).toBe(9800);
-    expect(report.byStage["Ops"]).toBeGreaterThan(1300);
+    expect(report.byStage["Ops"]).toBe(1339);
   });
 
   it("lists individual transactions", () => {
