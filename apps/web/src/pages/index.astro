@@ -21,21 +21,21 @@ try {
 <Base>
   <main class="max-w-3xl mx-auto px-6 pt-8 pb-24">
     <!-- Hero -->
-    <section class="pt-16 pb-12 mb-4">
-      <div class="flex items-baseline gap-3 mb-4">
+    <section class="pt-12 pb-8 mb-4">
+      <div class="flex items-baseline gap-3 mb-3">
         <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-[-0.05em]">解字</h1>
         <span class="text-sm text-ink-muted font-mono tracking-widest uppercase">jiě zì</span>
       </div>
 
-      <p class="text-2xl md:text-3xl font-bold leading-snug mb-6">
+      <p class="text-2xl md:text-3xl font-bold leading-snug mb-4">
         资助 <span class="font-mono text-vermillion">600</span> 名大学生，免费获得 AI 编程工具。
       </p>
 
-      <p class="text-ink-muted leading-relaxed mb-8">
+      <p class="text-ink-muted leading-relaxed mb-6">
         个人出资 15 万元，分三个阶段为在校大学生提供 AI Coding Plan、云服务器和 API Token。不限专业，不限基础。
       </p>
 
-      <div class="flex flex-wrap items-center gap-4 mb-10">
+      <div class="flex flex-wrap items-center gap-4">
         <a href="https://github.com/jiezi-ai/grant" class="inline-block bg-vermillion text-white font-medium text-sm px-5 py-2.5 hover:bg-vermillion-hover transition-colors">
           GitHub 了解详情
         </a>
@@ -43,18 +43,12 @@ try {
           如何申请
         </a>
       </div>
-
-      <div class="border-l-2 border-vermillion pl-4">
-        <p class="text-sm text-ink-muted leading-relaxed">
-          取自《说文解字》。字是语言最小的构成单位，token 是大模型最小的构成单位。
-        </p>
-      </div>
     </section>
 
     <!-- Stats -->
-    <section class="mb-24 space-y-6">
+    <section class="mb-24 border-y-2 border-ink">
       <!-- Batch progress -->
-      <div class="border-y-2 border-ink py-6">
+      <div class="py-6">
         <div class="flex justify-between items-baseline mb-4">
           <span class="font-mono text-sm text-ink-muted">资助批次</span>
           <span class="font-mono text-sm text-ink-muted">每批 100 人 · 共 600 人</span>
@@ -62,7 +56,7 @@ try {
         <div class="grid grid-cols-6 gap-2">
           {(overview?.batches ?? Array.from({length: 6}, (_, i) => ({id: i+1, status: "preparing", approved: 0}))).map((batch: any) => (
             <div class={`text-center py-3 border ${batch.status === 'open' ? 'border-vermillion bg-vermillion/[0.05]' : batch.status === 'closed' ? 'border-ink bg-ink/[0.04]' : 'border-border'}`}>
-              <p class="font-mono text-lg font-bold tabular-nums">{batch.approved || 0}</p>
+              <p class="font-mono text-lg font-bold tabular-nums">{batch.approved || 0}<span class="text-ink-muted font-normal text-xs">/100</span></p>
               <p class="text-[10px] font-mono text-ink-muted mt-0.5">第 {batch.id} 批</p>
               <p class={`text-[10px] font-mono mt-0.5 ${batch.status === 'open' ? 'text-vermillion' : batch.status === 'closed' ? 'text-ink' : 'text-ink-muted'}`}>
                 {batch.status === 'open' ? '申请中' : batch.status === 'closed' ? '已结束' : '筹备中'}
@@ -70,24 +64,24 @@ try {
             </div>
           ))}
         </div>
+        <p class="text-xs text-ink-muted mt-3">每人获得 1 个月 AI Coding Plan（MiniMax Plus 极速版），支持 Claude Code、Cline 等主流工具</p>
       </div>
 
       <!-- Budget progress -->
-      <div class="border-y-2 border-ink py-6">
-        <div class="flex justify-between items-baseline mb-3">
+      <div class="py-5 border-t border-border">
+        <div class="flex justify-between items-baseline mb-2">
           <span class="font-mono text-sm text-ink-muted">预算</span>
           <span class="font-mono text-sm">
             <span class="text-vermillion font-bold">{budget ? Math.round(budget.spent).toLocaleString() : "0"}</span>
             <span class="text-ink-muted"> / {budget?.committed?.toLocaleString() ?? "150,000"} CNY</span>
           </span>
         </div>
-        <div class="w-full h-2 bg-ink/[0.06] overflow-hidden">
+        <div class="w-full h-1.5 bg-ink/[0.06] overflow-hidden">
           <div
             class="h-full bg-vermillion transition-all duration-500"
             style={`width: ${budget ? Math.max((budget.spent / budget.committed) * 100, 0.5) : 0.5}%`}
           ></div>
         </div>
-        <p class="text-[10px] font-mono text-ink-muted mt-2">余额 {budget ? Math.round(budget.remaining).toLocaleString() : "150,000"} CNY</p>
       </div>
     </section>
 
