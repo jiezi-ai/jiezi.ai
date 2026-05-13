@@ -10,7 +10,7 @@ interface Student {
   batch: number;
 }
 
-export default function StudentList() {
+export default function StudentTicker() {
   const [students, setStudents] = useState<Student[]>([]);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function StudentList() {
   const items = [...students, ...students];
 
   return (
-    <div className="mb-6 overflow-hidden border-y border-border py-2.5">
+    <div className="overflow-hidden border-t border-border py-3">
       <div className="flex animate-scroll gap-8 whitespace-nowrap">
         {items.map((s, i) => (
           <span key={i} className="inline-flex items-center gap-2 text-xs text-ink-muted">

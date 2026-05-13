@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import StudentTicker from "./StudentTicker";
 
 const API_BASE =
   (import.meta as any).env?.PUBLIC_API_URL || "https://api.jiezi.ai";
@@ -100,6 +101,9 @@ export default function Stats() {
           每人获得 1 个月 AI Coding Plan，支持 Claude Code、Cline 等主流编程工具
         </p>
       </div>
+
+      {/* Student ticker */}
+      <StudentTicker />
 
       {/* Budget progress */}
       <div className="py-5 border-t border-border">
