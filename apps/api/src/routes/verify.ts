@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import type { Env } from "../index";
 import { GitHubClient } from "../services/github";
+import { CacheService } from "../services/cache";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -34,6 +35,11 @@ app.get("/", async (c) => {
   await c.env.DB.prepare(
     "UPDATE applications SET status = 'verified', verified_at = datetime('now') WHERE verify_token = ?",
   ).bind(token).run();
+
+  // 失效学生列表和概览缓存
+  const cache = new CacheService(c.env.CACHE);
+  await cache.invalidate("students_list");
+  await cache.invalidate("overview");
 
   // 自动 close issue + 打 verified label
   if (record.pr_number && c.env.GITHUB_TOKEN) {
