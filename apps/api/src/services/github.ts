@@ -87,6 +87,53 @@ export class GitHubClient {
     return res.ok;
   }
 
+  async commentIssue(issueNumber: number, body: string): Promise<boolean> {
+    const res = await fetch(
+      `${BASE}/repos/${this.owner}/${this.repo}/issues/${issueNumber}/comments`,
+      {
+        method: "POST",
+        headers: this.headers(),
+        body: JSON.stringify({ body }),
+      },
+    );
+    return res.ok;
+  }
+
+  async addLabels(issueNumber: number, labels: string[]): Promise<boolean> {
+    const res = await fetch(
+      `${BASE}/repos/${this.owner}/${this.repo}/issues/${issueNumber}/labels`,
+      {
+        method: "POST",
+        headers: this.headers(),
+        body: JSON.stringify({ labels }),
+      },
+    );
+    return res.ok;
+  }
+
+  async removeLabel(issueNumber: number, label: string): Promise<boolean> {
+    const res = await fetch(
+      `${BASE}/repos/${this.owner}/${this.repo}/issues/${issueNumber}/labels/${encodeURIComponent(label)}`,
+      {
+        method: "DELETE",
+        headers: this.headers(),
+      },
+    );
+    return res.ok;
+  }
+
+  async closeIssue(issueNumber: number): Promise<boolean> {
+    const res = await fetch(
+      `${BASE}/repos/${this.owner}/${this.repo}/issues/${issueNumber}`,
+      {
+        method: "PATCH",
+        headers: this.headers(),
+        body: JSON.stringify({ state: "closed" }),
+      },
+    );
+    return res.ok;
+  }
+
   async listOrgRepos(): Promise<
     Array<{
       name: string;

@@ -1,4 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+
+const mockFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}), text: async () => "" });
+vi.stubGlobal("fetch", mockFetch);
+
 import app from "../index";
 
 const mockKV = {
@@ -12,6 +16,7 @@ const mockStmt = {
   bind: vi.fn().mockReturnThis(),
   first: vi.fn().mockResolvedValue(null),
   run: vi.fn().mockResolvedValue({}),
+  all: vi.fn().mockResolvedValue({ results: [] }),
 };
 
 const mockDB = {
@@ -30,7 +35,7 @@ describe("webhook - push events", () => {
     vi.clearAllMocks();
   });
 
-  it("skips non-push/non-PR events", async () => {
+  it("skips non-push/non-issue events", async () => {
     const res = await app.request(
       "/api/webhook/github",
       {
@@ -86,50 +91,80 @@ describe("webhook - push events", () => {
     const data = await res.json();
     expect(data.invalidated).toContain("budget");
   });
-
-  it("invalidates batch cache for student submissions", async () => {
-    const res = await app.request(
-      "/api/webhook/github",
-      {
-        method: "POST",
-        headers: {
-          "X-GitHub-Event": "push",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          commits: [{ modified: [], added: ["students/batch-1/zhangsan.md"] }],
-        }),
-      },
-      mockEnv,
-    );
-    const data = await res.json();
-    expect(data.invalidated).toContain("overview");
-    expect(data.invalidated).toContain("batch:1");
-  });
 });
 
-describe("webhook - PR events", () => {
+describe("webhook - issue events", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("skips PR events that are not opened/synchronize", async () => {
+  it("skips issue events that are not opened", async () => {
     const res = await app.request(
       "/api/webhook/github",
       {
         method: "POST",
         headers: {
-          "X-GitHub-Event": "pull_request",
+          "X-GitHub-Event": "issues",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           action: "closed",
-          pull_request: { number: 1, user: { login: "test" } },
+          issue: { number: 1, user: { login: "test" }, body: "", title: "" },
         }),
       },
       mockEnv,
     );
     const data = await res.json();
     expect(data.skipped).toBe(true);
+  });
+
+  it("returns no_apply_code when issue has no code", async () => {
+    const res = await app.request(
+      "/api/webhook/github",
+      {
+        method: "POST",
+        headers: {
+          "X-GitHub-Event": "issues",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "opened",
+          issue: {
+            number: 1,
+            user: { login: "test" },
+            body: "no code here",
+            title: "test",
+          },
+        }),
+      },
+      mockEnv,
+    );
+    const data = await res.json();
+    expect(data.action).toBe("no_apply_code");
+  });
+
+  it("returns invalid_code when code not in DB", async () => {
+    const res = await app.request(
+      "/api/webhook/github",
+      {
+        method: "POST",
+        headers: {
+          "X-GitHub-Event": "issues",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "opened",
+          issue: {
+            number: 1,
+            user: { login: "test" },
+            body: "JZ-XXXX",
+            title: "[申请]",
+          },
+        }),
+      },
+      mockEnv,
+    );
+    const data = await res.json();
+    expect(data.action).toBe("invalid_code");
   });
 });

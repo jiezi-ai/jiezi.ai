@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "../index";
+import { GitHubClient } from "../services/github";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -22,7 +23,6 @@ app.get("/", async (c) => {
     return c.html(renderPage("already", record.github_id as string, c.env.WECHAT_QR_URL));
   }
 
-  // Check expiry (7 days)
   const createdAt = new Date(record.created_at as string);
   const now = new Date();
   const daysDiff = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
@@ -31,10 +31,26 @@ app.get("/", async (c) => {
     return c.html(renderPage("expired", "验证链接已过期（7 天有效期）。请重新提交申请。", c.env.WECHAT_QR_URL));
   }
 
-  // Mark as verified
   await c.env.DB.prepare(
     "UPDATE applications SET status = 'verified', verified_at = datetime('now') WHERE verify_token = ?",
   ).bind(token).run();
+
+  // 自动 close issue + 打 verified label
+  if (record.pr_number && c.env.GITHUB_TOKEN) {
+    const github = new GitHubClient(
+      c.env.GITHUB_OWNER,
+      c.env.GITHUB_REPO,
+      c.env.GITHUB_TOKEN,
+    );
+    const issueNumber = record.pr_number as number;
+    await github.addLabels(issueNumber, ["verified"]);
+    await github.removeLabel(issueNumber, "approved");
+    await github.commentIssue(
+      issueNumber,
+      `✅ 邮箱验证完成！欢迎加入解字计划。\n\n请添加发起人微信领取 AI Coding Plan。`,
+    );
+    await github.closeIssue(issueNumber);
+  }
 
   return c.html(renderPage("success", record.github_id as string, c.env.WECHAT_QR_URL));
 });
