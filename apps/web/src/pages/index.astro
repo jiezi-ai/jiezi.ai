@@ -53,24 +53,6 @@ try {
 
     <!-- Stats -->
     <section class="mb-24 space-y-6">
-      <!-- Budget progress -->
-      <div class="border-y-2 border-ink py-6">
-        <div class="flex justify-between items-baseline mb-3">
-          <span class="font-mono text-sm text-ink-muted">预算</span>
-          <span class="font-mono text-sm">
-            <span class="text-vermillion font-bold">{budget ? Math.round(budget.spent).toLocaleString() : "0"}</span>
-            <span class="text-ink-muted"> / {budget?.committed?.toLocaleString() ?? "150,000"} CNY</span>
-          </span>
-        </div>
-        <div class="w-full h-2 bg-ink/[0.06] overflow-hidden">
-          <div
-            class="h-full bg-vermillion transition-all duration-500"
-            style={`width: ${budget ? Math.max((budget.spent / budget.committed) * 100, 0.5) : 0.5}%`}
-          ></div>
-        </div>
-        <p class="text-[10px] font-mono text-ink-muted mt-2">余额 {budget ? Math.round(budget.remaining).toLocaleString() : "150,000"} CNY</p>
-      </div>
-
       <!-- Batch progress -->
       <div class="border-y-2 border-ink py-6">
         <div class="flex justify-between items-baseline mb-4">
@@ -88,6 +70,24 @@ try {
             </div>
           ))}
         </div>
+      </div>
+
+      <!-- Budget progress -->
+      <div class="border-y-2 border-ink py-6">
+        <div class="flex justify-between items-baseline mb-3">
+          <span class="font-mono text-sm text-ink-muted">预算</span>
+          <span class="font-mono text-sm">
+            <span class="text-vermillion font-bold">{budget ? Math.round(budget.spent).toLocaleString() : "0"}</span>
+            <span class="text-ink-muted"> / {budget?.committed?.toLocaleString() ?? "150,000"} CNY</span>
+          </span>
+        </div>
+        <div class="w-full h-2 bg-ink/[0.06] overflow-hidden">
+          <div
+            class="h-full bg-vermillion transition-all duration-500"
+            style={`width: ${budget ? Math.max((budget.spent / budget.committed) * 100, 0.5) : 0.5}%`}
+          ></div>
+        </div>
+        <p class="text-[10px] font-mono text-ink-muted mt-2">余额 {budget ? Math.round(budget.remaining).toLocaleString() : "150,000"} CNY</p>
       </div>
     </section>
 
