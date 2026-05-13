@@ -1,0 +1,16 @@
+name = "jiezi-api"
+main = "src/index.ts"
+compatibility_date = "2025-05-10"
+
+[vars]
+GITHUB_OWNER = "jiezi-ai"
+GITHUB_REPO = "grant"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = ""  # 部署时填写
+
+# [[ d1_databases ]]
+# binding = "DB"
+# database_name = "jiezi"
+# database_id = ""  # 部署时填写

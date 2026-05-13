@@ -1,0 +1,9 @@
+{
+  "name": "jiezi.ai",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter api dev",
+    "build": "pnpm --filter api build",
+    "deploy": "pnpm --filter api deploy"
+  }
+}
