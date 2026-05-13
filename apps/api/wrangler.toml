@@ -10,7 +10,7 @@ GITHUB_REPO = "grant"
 binding = "CACHE"
 id = "1891987c4b9e4de0800d5cf53c47bd09"
 
-# [[ d1_databases ]]
-# binding = "DB"
-# database_name = "jiezi"
-# database_id = ""  # 部署时填写
+[[d1_databases]]
+binding = "DB"
+database_name = "jiezi"
+database_id = "e89cf512-f812-4b82-98f3-09b7dbcb7fc2"

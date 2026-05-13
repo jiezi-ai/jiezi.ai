@@ -1,27 +1,36 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import app from "../index";
 
-const mockDelete = vi.fn();
 const mockKV = {
-  get: vi.fn(),
+  get: vi.fn().mockResolvedValue(null),
   put: vi.fn(),
-  delete: mockDelete,
+  delete: vi.fn(),
   list: vi.fn().mockResolvedValue({ keys: [] }),
+};
+
+const mockStmt = {
+  bind: vi.fn().mockReturnThis(),
+  first: vi.fn().mockResolvedValue(null),
+  run: vi.fn().mockResolvedValue({}),
+};
+
+const mockDB = {
+  prepare: vi.fn().mockReturnValue(mockStmt),
 };
 
 const mockEnv = {
   CACHE: mockKV as unknown as KVNamespace,
+  DB: mockDB as unknown as D1Database,
   GITHUB_OWNER: "jiezi-ai",
   GITHUB_REPO: "grant",
 };
 
-import app from "../index";
-
-describe("webhook", () => {
+describe("webhook - push events", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("skips non-push events", async () => {
+  it("skips non-push/non-PR events", async () => {
     const res = await app.request(
       "/api/webhook/github",
       {
@@ -48,12 +57,7 @@ describe("webhook", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          commits: [
-            {
-              modified: ["policy/selection.md"],
-              added: [],
-            },
-          ],
+          commits: [{ modified: ["policy/selection.md"], added: [] }],
         }),
       },
       mockEnv,
@@ -101,5 +105,31 @@ describe("webhook", () => {
     const data = await res.json();
     expect(data.invalidated).toContain("overview");
     expect(data.invalidated).toContain("batch:1");
+  });
+});
+
+describe("webhook - PR events", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("skips PR events that are not opened/synchronize", async () => {
+    const res = await app.request(
+      "/api/webhook/github",
+      {
+        method: "POST",
+        headers: {
+          "X-GitHub-Event": "pull_request",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "closed",
+          pull_request: { number: 1, user: { login: "test" } },
+        }),
+      },
+      mockEnv,
+    );
+    const data = await res.json();
+    expect(data.skipped).toBe(true);
   });
 });

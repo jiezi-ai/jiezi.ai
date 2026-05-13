@@ -10,12 +10,17 @@ import policy from "./routes/policy";
 import changelog from "./routes/changelog";
 import projects from "./routes/projects";
 import webhook from "./routes/webhook";
+import verify from "./routes/verify";
 
 export interface Env {
   CACHE: KVNamespace;
+  DB: D1Database;
   GITHUB_OWNER: string;
   GITHUB_REPO: string;
   GITHUB_TOKEN?: string;
+  RESEND_API_KEY?: string;
+  GEMINI_API_KEY?: string;
+  WECHAT_QR_URL?: string;
 }
 
 declare module "hono" {
@@ -49,6 +54,7 @@ app.route("/api/policy", policy);
 app.route("/api/changelog", changelog);
 app.route("/api/projects", projects);
 app.route("/api/webhook", webhook);
+app.route("/api/verify", verify);
 
 app.get("/", (c) => c.json({ name: "jiezi-api", status: "ok" }));
 

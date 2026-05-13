@@ -45,6 +45,48 @@ export class GitHubClient {
     return files.length;
   }
 
+  async getPRFiles(prNumber: number): Promise<Array<{ filename: string; patch?: string; raw_url: string }>> {
+    const res = await fetch(
+      `${BASE}/repos/${this.owner}/${this.repo}/pulls/${prNumber}/files`,
+      { headers: this.headers() },
+    );
+    if (!res.ok) return [];
+    return res.json();
+  }
+
+  async getPRFileContent(rawUrl: string): Promise<string | null> {
+    const res = await fetch(rawUrl, { headers: this.headers() });
+    if (!res.ok) return null;
+    return res.text();
+  }
+
+  async mergePR(prNumber: number, commitMessage: string): Promise<boolean> {
+    const res = await fetch(
+      `${BASE}/repos/${this.owner}/${this.repo}/pulls/${prNumber}/merge`,
+      {
+        method: "PUT",
+        headers: this.headers(),
+        body: JSON.stringify({
+          commit_title: commitMessage,
+          merge_method: "squash",
+        }),
+      },
+    );
+    return res.ok;
+  }
+
+  async commentPR(prNumber: number, body: string): Promise<boolean> {
+    const res = await fetch(
+      `${BASE}/repos/${this.owner}/${this.repo}/issues/${prNumber}/comments`,
+      {
+        method: "POST",
+        headers: this.headers(),
+        body: JSON.stringify({ body }),
+      },
+    );
+    return res.ok;
+  }
+
   async listOrgRepos(): Promise<
     Array<{
       name: string;
