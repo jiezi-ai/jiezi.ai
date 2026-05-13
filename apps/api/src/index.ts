@@ -12,6 +12,7 @@ import projects from "./routes/projects";
 import webhook from "./routes/webhook";
 import verify from "./routes/verify";
 import apply from "./routes/apply";
+import students from "./routes/students";
 
 export interface Env {
   CACHE: KVNamespace;
@@ -57,6 +58,7 @@ app.route("/api/projects", projects);
 app.route("/api/webhook", webhook);
 app.route("/api/verify", verify);
 app.route("/api/apply", apply);
+app.route("/api/students", students);
 
 app.get("/", (c) => c.json({ name: "jiezi-api", status: "ok" }));
 

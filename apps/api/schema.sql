@@ -5,6 +5,7 @@ CREATE TABLE applications (
   apply_code TEXT NOT NULL UNIQUE,
   github_id TEXT,
   batch INTEGER NOT NULL DEFAULT 1,
+  name TEXT DEFAULT '',
   school TEXT,
   major TEXT,
   grade TEXT,

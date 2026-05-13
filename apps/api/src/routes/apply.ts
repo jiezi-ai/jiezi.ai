@@ -24,6 +24,7 @@ app.post("/", async (c) => {
   }
 
   const body = await c.req.json<{
+    name?: string;
     school?: string;
     major?: string;
     grade?: string;
@@ -31,8 +32,8 @@ app.post("/", async (c) => {
     motivation?: string;
   }>();
 
-  if (!body.edu_email || !body.school) {
-    return c.json({ error: "学校和 edu 邮箱为必填项" }, 400);
+  if (!body.edu_email || !body.school || !body.name) {
+    return c.json({ error: "姓名、学校和 edu 邮箱为必填项" }, 400);
   }
 
   const emailLower = body.edu_email.toLowerCase().trim();
@@ -61,8 +62,8 @@ app.post("/", async (c) => {
   }
 
   await c.env.DB.prepare(
-    "INSERT INTO applications (apply_code, school, major, grade, edu_email, motivation, status) VALUES (?, ?, ?, ?, ?, ?, 'draft')",
-  ).bind(applyCode, body.school, body.major || "", body.grade || "", emailLower, body.motivation || "").run();
+    "INSERT INTO applications (apply_code, name, school, major, grade, edu_email, motivation, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'draft')",
+  ).bind(applyCode, body.name, body.school, body.major || "", body.grade || "", emailLower, body.motivation || "").run();
 
   // 更新限频计数
   await cache.set(rateKey, (count || 0) + 1, 3600);
@@ -94,6 +95,7 @@ app.post("/:code", async (c) => {
   return c.json({
     apply_code: record.apply_code,
     status: record.status,
+    name: record.name,
     school: record.school,
     major: record.major,
     grade: record.grade,
@@ -108,6 +110,7 @@ app.put("/:code", async (c) => {
   const code = c.req.param("code").toUpperCase();
   const body = await c.req.json<{
     edu_email: string;
+    name?: string;
     school?: string;
     major?: string;
     grade?: string;
@@ -131,8 +134,8 @@ app.put("/:code", async (c) => {
   }
 
   await c.env.DB.prepare(
-    "UPDATE applications SET school = COALESCE(?, school), major = COALESCE(?, major), grade = COALESCE(?, grade), motivation = COALESCE(?, motivation), status = 'draft', updated_at = datetime('now') WHERE id = ?",
-  ).bind(body.school || null, body.major || null, body.grade || null, body.motivation || null, record.id).run();
+    "UPDATE applications SET name = COALESCE(?, name), school = COALESCE(?, school), major = COALESCE(?, major), grade = COALESCE(?, grade), motivation = COALESCE(?, motivation), status = 'draft', updated_at = datetime('now') WHERE id = ?",
+  ).bind(body.name || null, body.school || null, body.major || null, body.grade || null, body.motivation || null, record.id).run();
 
   return c.json({ ok: true, status: "draft" });
 });

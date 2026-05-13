@@ -43,6 +43,7 @@ describe("apply API", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          name: "张三",
           school: "北京大学",
           major: "计算机科学",
           grade: "大三",
@@ -100,6 +101,7 @@ describe("apply API", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          name: "张三",
           school: "北京大学",
           edu_email: "zhangsan@pku.edu.cn",
         }),

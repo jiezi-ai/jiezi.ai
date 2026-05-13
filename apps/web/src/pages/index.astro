@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import Stats from "../components/Stats";
 import Ledger from "../components/Ledger";
+import StudentList from "../components/StudentList";
 ---
 
 <Base>
@@ -34,6 +35,9 @@ import Ledger from "../components/Ledger";
 
     <!-- Stats (client-side, fetches from API) -->
     <Stats client:load />
+
+    <!-- Student List (client-side, fetches from API) -->
+    <StudentList client:load />
 
     <!-- Why -->
     <section class="mb-24">

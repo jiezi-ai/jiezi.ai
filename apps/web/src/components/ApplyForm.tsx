@@ -10,6 +10,7 @@ export default function ApplyForm() {
   const [applyCode, setApplyCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({
+    name: "",
     school: "",
     major: "",
     grade: "",
@@ -17,7 +18,7 @@ export default function ApplyForm() {
     motivation: "",
   });
 
-  const canSubmit = form.school.trim() && form.edu_email.trim();
+  const canSubmit = form.name.trim() && form.school.trim() && form.edu_email.trim();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -140,6 +141,22 @@ export default function ApplyForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium mb-1">
+          姓名 <span className="text-vermillion">*</span>
+        </label>
+        <input
+          type="text"
+          placeholder="如：张三"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className="w-full border border-border px-3 py-2.5 text-sm bg-transparent focus:outline-none focus:border-ink transition-colors"
+        />
+        <p className="text-xs text-ink-muted mt-1">
+          公开展示时仅显示姓氏（如：张*）
+        </p>
+      </div>
+
       <div>
         <label className="block text-sm font-medium mb-1">
           学校 <span className="text-vermillion">*</span>
