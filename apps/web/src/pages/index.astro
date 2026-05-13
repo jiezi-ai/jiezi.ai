@@ -21,17 +21,14 @@ import Ledger from "../components/Ledger";
         个人出资 15 万元，提供 <span class="term" data-tip="AI 编程 Agent 的付费订阅，AI 自主帮你写代码、做项目、调试部署">AI Coding Plan</span>、云服务器和 <span class="term" data-tip="在你自己的应用中调用 AI 的额度，让 AI 成为你产品的一部分">API Token</span>，以及来自行业一线的 1v1 辅导和项目曝光。不限专业，不限基础。
       </p>
 
-      <div class="flex flex-wrap items-center gap-4 mb-6">
+      <div class="mb-6">
         <a href="#apply" class="inline-block bg-vermillion text-white font-medium text-sm px-5 py-2.5 hover:bg-vermillion-hover transition-colors">
           申请资助
-        </a>
-        <a href="https://github.com/jiezi-ai/grant" class="inline-block border border-ink text-ink font-medium text-sm px-5 py-2.5 hover:bg-ink hover:text-paper transition-colors">
-          查看完整方案
         </a>
       </div>
 
       <p class="text-xs text-ink-muted border-l-2 border-vermillion pl-3">
-        「解字」取自《说文解字》——字是语言最小的构成单位，token 是大模型最小的构成单位。
+        「解字」取自<a href="https://zh.wikipedia.org/wiki/%E8%AF%B4%E6%96%87%E8%A7%A3%E5%AD%97" class="text-vermillion hover:underline">《说文解字》</a>——字是语言最小的构成单位，token 是大模型最小的构成单位。
       </p>
     </section>
 
@@ -47,7 +44,7 @@ import Ledger from "../components/Ledger";
 
       <div class="border-l-2 border-vermillion pl-4">
         <p class="text-ink leading-relaxed">
-          公元 100 年，许慎写成《说文解字》，将九千多个汉字拆解到最小的构件——部首。两千年后，语言的最小单位变了，叫 token。
+          公元 100 年，许慎写成<a href="https://zh.wikipedia.org/wiki/%E8%AF%B4%E6%96%87%E8%A7%A3%E5%AD%97" class="text-vermillion hover:underline">《说文解字》</a>，将九千多个汉字拆解到最小的构件——部首。两千年后，语言的最小单位变了，叫 <span class="term" data-tip="大语言模型处理信息的最小单位，相当于语言的'原子'">token</span>。
         </p>
       </div>
 
@@ -75,7 +72,7 @@ import Ledger from "../components/Ledger";
       </div>
 
       <p class="text-ink-muted mb-8">
-        体验 → 实践 → 长期支持。每个阶段设有门槛，不是为了淘汰，而是为了找到真正想做事的人。
+        体验 → 实践 → 长期支持。你走多远，我们就支持多远。
       </p>
 
       <div class="space-y-6">
@@ -88,7 +85,7 @@ import Ledger from "../components/Ledger";
           <p class="text-sm text-ink-muted mt-1">让每一个想接触 AI 的大学生，都有机会亲手体验。</p>
 
           <div class="mt-4 space-y-1 text-sm">
-            <span class="flex gap-2"><span class="text-vermillion">·</span><span class="term" data-tip="AI 编程 Agent 的付费订阅，AI 自主帮你写代码、做项目、调试部署">AI Coding Plan</span>，支持 Claude Code、Cline、Roo Code 等</span>
+            <span class="flex gap-2"><span class="text-vermillion">·</span><span class="term" data-tip="AI 编程 Agent 的付费订阅，AI 自主帮你写代码、做项目、调试部署">AI Coding Plan</span>，支持 <a href="https://claude.ai/code" class="text-vermillion hover:underline">Claude Code</a>、<a href="https://cline.bot" class="text-vermillion hover:underline">Cline</a>、Roo Code 等</span>
             <span class="flex gap-2"><span class="text-vermillion">·</span>无条件赠送，不要求提交成果</span>
           </div>
 
@@ -112,13 +109,13 @@ import Ledger from "../components/Ledger";
           </div>
 
           <div class="mt-4 space-y-1 text-sm">
-            <span class="flex gap-2"><span class="text-vermillion">·</span>发起人（前 Manus AI 工程师，1.5 万粉丝）1v1 交流</span>
+            <span class="flex gap-2"><span class="text-vermillion">·</span>发起人（前 <a href="https://manus.im" class="text-vermillion hover:underline">Manus AI</a> 工程师，1.5 万粉丝）1v1 交流</span>
             <span class="flex gap-2"><span class="text-vermillion">·</span>优秀项目在社交媒体曝光推荐</span>
             <span class="flex gap-2"><span class="text-vermillion">·</span>实习机会对接</span>
           </div>
 
           <div class="mt-4 pt-4 border-t border-border/50 text-xs text-ink-muted">
-            <p class="font-mono uppercase tracking-wider">条件：50 star 的 GitHub 项目 + 发起人评审</p>
+            <p class="font-mono uppercase tracking-wider">条件：50 <span class="term" data-tip="GitHub 上的点赞/收藏数，代表有多少人认可你的项目">star</span> 的 GitHub 项目 + 发起人评审</p>
             <p class="mt-2">达到 50 star 即可解锁 1v1 交流，无论是否通过评审。</p>
           </div>
         </div>
@@ -160,12 +157,12 @@ import Ledger from "../components/Ledger";
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="border-y border-border py-6">
-          <h3 class="font-serif font-bold">用 code agent 申请</h3>
+          <h3 class="font-serif font-bold">用 <span class="term" data-tip="AI 编程 Agent，能自主帮你完成编程任务的 AI 工具">code agent</span> 申请</h3>
           <div class="bg-ink/[0.03] p-4 font-mono text-sm mt-3 border-l border-ink/10">
             我要申请 jiezi-ai/grant
           </div>
           <p class="text-xs text-ink-muted mt-3">
-            在 Claude Code、Cursor 或 Cline 中输入这句话，agent 会自动完成全部申请流程。
+            在 <a href="https://claude.ai/code" class="text-vermillion hover:underline">Claude Code</a>、<a href="https://cursor.com" class="text-vermillion hover:underline">Cursor</a> 或 <a href="https://cline.bot" class="text-vermillion hover:underline">Cline</a> 中输入这句话，agent 会自动完成全部申请流程。
           </p>
         </div>
 
@@ -190,7 +187,7 @@ import Ledger from "../components/Ledger";
       </div>
 
       <p class="text-base leading-relaxed text-ink">
-        我是 <a href="https://x.com/yan5xu" class="text-vermillion hover:underline">@yan5xu</a>（许长鹏），前 Manus AI & Monica AI 工程师。2023 年加入 AI Agent 浪潮，参与构建了 Manus 和 Monica（1000 万用户）。离开后投入开源社区，创建了 Pinix 和 bb-browser。
+        我是 <a href="https://x.com/yan5xu" class="text-vermillion hover:underline">@yan5xu</a>（许长鹏），前 <a href="https://manus.im" class="text-vermillion hover:underline">Manus AI</a> & <a href="https://monica.im" class="text-vermillion hover:underline">Monica AI</a> 工程师。2023 年加入 AI Agent 浪潮，参与构建了 Manus 和 Monica（1000 万用户）。离开后投入开源社区，创建了 <a href="https://github.com/nicepkg/pinix" class="text-vermillion hover:underline">Pinix</a> 和 <a href="https://github.com/nicepkg/bb-browser" class="text-vermillion hover:underline">bb-browser</a>。
       </p>
 
       <p class="mt-4 text-ink-muted leading-relaxed">
@@ -241,28 +238,28 @@ import Ledger from "../components/Ledger";
           <div class="flex justify-between py-2">
             <span>第一阶段 · 体验期</span>
             <div class="flex gap-4">
-              <span>58,800 CNY</span>
+              <span>58,800 元</span>
               <span class="text-ink-muted w-10 text-right">43%</span>
             </div>
           </div>
           <div class="flex justify-between py-2">
             <span>第二阶段 · 深度资助</span>
             <div class="flex gap-4">
-              <span>63,240 CNY</span>
+              <span>63,240 元</span>
               <span class="text-ink-muted w-10 text-right">46%</span>
             </div>
           </div>
           <div class="flex justify-between py-2">
             <span>第三阶段 · 长期资助</span>
             <div class="flex gap-4">
-              <span>13,080 CNY</span>
+              <span>13,080 元</span>
               <span class="text-ink-muted w-10 text-right">10%</span>
             </div>
           </div>
           <div class="flex justify-between py-2">
             <span>运营成本</span>
             <div class="flex gap-4">
-              <span>≈1,339 CNY</span>
+              <span>≈1,339 元</span>
               <span class="text-ink-muted w-10 text-right">1%</span>
             </div>
           </div>
@@ -270,7 +267,7 @@ import Ledger from "../components/Ledger";
         <div class="border-t-2 border-ink pt-2 mt-2 flex justify-between font-bold">
           <span>合计</span>
           <div class="flex gap-4">
-            <span>≈136,459 CNY</span>
+            <span>≈136,459 元</span>
             <span class="text-ink-muted w-10 text-right">100%</span>
           </div>
         </div>
