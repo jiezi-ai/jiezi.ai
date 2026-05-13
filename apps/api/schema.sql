@@ -1,17 +1,21 @@
-CREATE TABLE IF NOT EXISTS applications (
+DROP TABLE IF EXISTS applications;
+
+CREATE TABLE applications (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  github_id TEXT NOT NULL UNIQUE,
-  batch INTEGER NOT NULL,
+  apply_code TEXT NOT NULL UNIQUE,
+  github_id TEXT,
+  batch INTEGER NOT NULL DEFAULT 1,
   school TEXT,
   major TEXT,
   grade TEXT,
-  edu_email TEXT,
+  edu_email TEXT NOT NULL,
   motivation TEXT,
   pr_number INTEGER,
   verify_token TEXT UNIQUE,
   verified_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  status TEXT NOT NULL DEFAULT 'pending'
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  status TEXT NOT NULL DEFAULT 'draft'
 );
 
 CREATE TABLE IF NOT EXISTS sync_log (
