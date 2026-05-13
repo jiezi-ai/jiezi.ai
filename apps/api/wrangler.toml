@@ -8,7 +8,7 @@ GITHUB_REPO = "grant"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = ""  # 部署时填写
+id = "local-dev"  # 部署时填写真实 ID
 
 # [[ d1_databases ]]
 # binding = "DB"

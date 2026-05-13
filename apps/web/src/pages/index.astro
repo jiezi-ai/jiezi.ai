@@ -22,22 +22,31 @@ try {
   <main class="max-w-3xl mx-auto px-6 pt-8 pb-24">
     <!-- Hero -->
     <section class="pt-16 pb-12 mb-4">
-      <div class="mb-8 group">
-        <div class="flex items-baseline gap-3">
-          <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-[-0.05em]">解字</h1>
-          <span class="text-sm text-ink-muted font-mono tracking-widest uppercase">jiě zì</span>
-        </div>
-        <div class="h-1 w-32 bg-vermillion mt-6"></div>
+      <div class="flex items-baseline gap-3 mb-4">
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-[-0.05em]">解字</h1>
+        <span class="text-sm text-ink-muted font-mono tracking-widest uppercase">jiě zì</span>
       </div>
 
-      <div class="max-w-lg">
-        <div class="border-l-2 border-vermillion pl-4 mb-10">
-          <p class="text-ink-muted leading-relaxed">
-            取自《说文解字》。字是语言最小的构成单位，token 是大模型最小的构成单位。
-          </p>
-        </div>
-        <p class="text-xl md:text-2xl font-medium leading-relaxed text-ink">
-          我们资助大学生获得 AI token，解开他们和 AI 之间的门槛。
+      <p class="text-2xl md:text-3xl font-bold leading-snug mb-6">
+        资助 <span class="font-mono text-vermillion">600</span> 名大学生，免费获得 AI 编程工具。
+      </p>
+
+      <p class="text-ink-muted leading-relaxed mb-8">
+        个人出资 15 万元，分三个阶段为在校大学生提供 AI Coding Plan、云服务器和 API Token。不限专业，不限基础。
+      </p>
+
+      <div class="flex flex-wrap items-center gap-4 mb-10">
+        <a href="https://github.com/jiezi-ai/grant" class="inline-block bg-vermillion text-white font-medium text-sm px-5 py-2.5 hover:bg-vermillion-hover transition-colors">
+          GitHub 了解详情
+        </a>
+        <a href="#apply" class="inline-block border border-ink text-ink font-medium text-sm px-5 py-2.5 hover:bg-ink hover:text-paper transition-colors">
+          如何申请
+        </a>
+      </div>
+
+      <div class="border-l-2 border-vermillion pl-4">
+        <p class="text-sm text-ink-muted leading-relaxed">
+          取自《说文解字》。字是语言最小的构成单位，token 是大模型最小的构成单位。
         </p>
       </div>
     </section>
@@ -50,19 +59,19 @@ try {
             <p class="font-mono text-4xl font-bold tabular-nums text-vermillion">
               {budget?.committed?.toLocaleString() ?? "150,000"}
             </p>
-            <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">承诺注资 (CNY)</p>
+            <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">总预算 (CNY)</p>
           </div>
           <div class="text-center px-6 py-4 md:py-0">
             <p class="font-mono text-4xl font-bold tabular-nums">
-              {overview?.funnel?.stage1 ?? "600"}
+              600
             </p>
             <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">资助名额</p>
           </div>
           <div class="text-center px-6 py-4 md:py-0">
             <p class="font-mono text-4xl font-bold tabular-nums">
-              {budget ? Math.round((budget.spent / budget.committed) * 100) : 0}%
+              {budget ? Math.round(budget.spent).toLocaleString() : "0"}
             </p>
-            <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">资金消耗</p>
+            <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">已支出 (CNY)</p>
           </div>
         </div>
       </div>
@@ -199,7 +208,7 @@ try {
     </section>
 
     <!-- How to Apply -->
-    <section class="mb-24">
+    <section id="apply" class="mb-24">
       <div class="mb-8">
         <h2 class="text-xl font-bold font-serif">如何申请</h2>
         <span class="text-xs font-mono text-ink-muted tracking-widest uppercase">How to Apply</span>
@@ -337,11 +346,11 @@ try {
         </div>
         <div class="flex justify-between items-baseline mb-3">
           <span class="text-ink-muted">已支出</span>
-          <span class="tabular-nums font-medium">{budget?.spent?.toLocaleString() ?? "0"} CNY</span>
+          <span class="tabular-nums font-medium">{budget ? Math.round(budget.spent).toLocaleString() : "0"} CNY</span>
         </div>
         <div class="flex justify-between items-baseline border-t border-ink/10 pt-3 mt-3">
           <span class="font-bold">实时余额</span>
-          <span class="font-bold tabular-nums text-lg text-vermillion">{budget?.remaining?.toLocaleString() ?? "150,000"} CNY</span>
+          <span class="font-bold tabular-nums text-lg text-vermillion">{budget ? Math.round(budget.remaining).toLocaleString() : "150,000"} CNY</span>
         </div>
         <p class="text-[10px] text-ink-muted mt-4 uppercase tracking-widest">数据每日 00:00 UTC+8 更新</p>
       </div>
