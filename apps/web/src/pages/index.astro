@@ -52,27 +52,41 @@ try {
     </section>
 
     <!-- Stats -->
-    <section class="mb-24">
-      <div class="border-y-2 border-ink py-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/50">
-          <div class="text-center px-6 py-4 md:py-0">
-            <p class="font-mono text-4xl font-bold tabular-nums text-vermillion">
-              {budget?.committed?.toLocaleString() ?? "150,000"}
-            </p>
-            <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">总预算 (CNY)</p>
-          </div>
-          <div class="text-center px-6 py-4 md:py-0">
-            <p class="font-mono text-4xl font-bold tabular-nums">
-              600
-            </p>
-            <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">资助名额</p>
-          </div>
-          <div class="text-center px-6 py-4 md:py-0">
-            <p class="font-mono text-4xl font-bold tabular-nums">
-              {budget ? Math.round(budget.spent).toLocaleString() : "0"}
-            </p>
-            <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">已支出 (CNY)</p>
-          </div>
+    <section class="mb-24 space-y-6">
+      <!-- Budget progress -->
+      <div class="border-y-2 border-ink py-6">
+        <div class="flex justify-between items-baseline mb-3">
+          <span class="font-mono text-sm text-ink-muted">预算</span>
+          <span class="font-mono text-sm">
+            <span class="text-vermillion font-bold">{budget ? Math.round(budget.spent).toLocaleString() : "0"}</span>
+            <span class="text-ink-muted"> / {budget?.committed?.toLocaleString() ?? "150,000"} CNY</span>
+          </span>
+        </div>
+        <div class="w-full h-2 bg-ink/[0.06] overflow-hidden">
+          <div
+            class="h-full bg-vermillion transition-all duration-500"
+            style={`width: ${budget ? Math.max((budget.spent / budget.committed) * 100, 0.5) : 0.5}%`}
+          ></div>
+        </div>
+        <p class="text-[10px] font-mono text-ink-muted mt-2">余额 {budget ? Math.round(budget.remaining).toLocaleString() : "150,000"} CNY</p>
+      </div>
+
+      <!-- Batch progress -->
+      <div class="border-y-2 border-ink py-6">
+        <div class="flex justify-between items-baseline mb-4">
+          <span class="font-mono text-sm text-ink-muted">资助批次</span>
+          <span class="font-mono text-sm text-ink-muted">每批 100 人 · 共 600 人</span>
+        </div>
+        <div class="grid grid-cols-6 gap-2">
+          {(overview?.batches ?? Array.from({length: 6}, (_, i) => ({id: i+1, status: "preparing", approved: 0}))).map((batch: any) => (
+            <div class={`text-center py-3 border ${batch.status === 'open' ? 'border-vermillion bg-vermillion/[0.05]' : batch.status === 'closed' ? 'border-ink bg-ink/[0.04]' : 'border-border'}`}>
+              <p class="font-mono text-lg font-bold tabular-nums">{batch.approved || 0}</p>
+              <p class="text-[10px] font-mono text-ink-muted mt-0.5">第 {batch.id} 批</p>
+              <p class={`text-[10px] font-mono mt-0.5 ${batch.status === 'open' ? 'text-vermillion' : batch.status === 'closed' ? 'text-ink' : 'text-ink-muted'}`}>
+                {batch.status === 'open' ? '申请中' : batch.status === 'closed' ? '已结束' : '筹备中'}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
