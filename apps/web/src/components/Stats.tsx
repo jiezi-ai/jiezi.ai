@@ -57,7 +57,7 @@ export default function Stats() {
             每批 100 人 · 共 600 人
           </span>
         </div>
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
           {displayBatches.map((batch) => (
             <div
               key={batch.id}
@@ -75,11 +75,11 @@ export default function Stats() {
                   /100
                 </span>
               </p>
-              <p className="text-[10px] font-mono text-ink-muted mt-0.5">
+              <p className="text-[11px] font-mono text-ink-muted mt-0.5">
                 第 {batch.id} 批
               </p>
               <p
-                className={`text-[10px] font-mono mt-0.5 ${
+                className={`text-[11px] font-mono mt-0.5 ${
                   batch.status === "open"
                     ? "text-vermillion"
                     : batch.status === "closed"
