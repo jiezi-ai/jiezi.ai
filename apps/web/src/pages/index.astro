@@ -1,0 +1,369 @@
+---
+import Base from "../layouts/Base.astro";
+
+const API_BASE = import.meta.env.PUBLIC_API_URL || "http://localhost:8787";
+
+let overview = null;
+let budget = null;
+
+try {
+  const [overviewRes, budgetRes] = await Promise.all([
+    fetch(`${API_BASE}/api/overview`),
+    fetch(`${API_BASE}/api/budget`),
+  ]);
+  if (overviewRes.ok) overview = await overviewRes.json();
+  if (budgetRes.ok) budget = await budgetRes.json();
+} catch {
+  // API not available, render with placeholder data
+}
+---
+
+<Base>
+  <main class="max-w-3xl mx-auto px-6 pt-8 pb-24">
+    <!-- Hero -->
+    <section class="pt-16 pb-12 mb-4">
+      <div class="mb-8 group">
+        <div class="flex items-baseline gap-3">
+          <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-[-0.05em]">解字</h1>
+          <span class="text-sm text-ink-muted font-mono tracking-widest uppercase">jiě zì</span>
+        </div>
+        <div class="h-1 w-32 bg-vermillion mt-6"></div>
+      </div>
+
+      <div class="max-w-lg">
+        <div class="border-l-2 border-vermillion pl-4 mb-10">
+          <p class="text-ink-muted leading-relaxed">
+            取自《说文解字》。字是语言最小的构成单位，token 是大模型最小的构成单位。
+          </p>
+        </div>
+        <p class="text-xl md:text-2xl font-medium leading-relaxed text-ink">
+          我们资助大学生获得 AI token，解开他们和 AI 之间的门槛。
+        </p>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="mb-24">
+      <div class="border-y-2 border-ink py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/50">
+          <div class="text-center px-6 py-4 md:py-0">
+            <p class="font-mono text-4xl font-bold tabular-nums text-vermillion">
+              {budget?.committed?.toLocaleString() ?? "150,000"}
+            </p>
+            <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">承诺注资 (CNY)</p>
+          </div>
+          <div class="text-center px-6 py-4 md:py-0">
+            <p class="font-mono text-4xl font-bold tabular-nums">
+              {overview?.funnel?.stage1 ?? "600"}
+            </p>
+            <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">资助名额</p>
+          </div>
+          <div class="text-center px-6 py-4 md:py-0">
+            <p class="font-mono text-4xl font-bold tabular-nums">
+              {budget ? Math.round((budget.spent / budget.committed) * 100) : 0}%
+            </p>
+            <p class="text-xs tracking-widest uppercase font-mono text-ink-muted mt-2">资金消耗</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why -->
+    <section class="mb-24">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold font-serif">为什么</h2>
+        <span class="text-xs font-mono text-ink-muted tracking-widest uppercase">Why</span>
+      </div>
+      
+      <div class="border-l-2 border-vermillion pl-4">
+        <p class="text-ink leading-relaxed">
+          公元 100 年，许慎写成《说文解字》，将九千多个汉字逐一拆解到最小的构件——部首。这是人类第一次对语言进行系统性的原子级解析。两千年后，语言的最小单位变了，叫 token。
+        </p>
+      </div>
+
+      <p class="mt-6 text-ink leading-relaxed">
+        大语言模型将一切文字、代码、推理拆解为 token 来处理。谁拥有足够的 token，谁就能让 AI 为自己工作。Token 之于今天的 AI，正如文字之于两千年前的知识——掌握它的人获得力量，被它挡在门外的人只能旁观。
+      </p>
+
+      <div class="mt-8 bg-ink/[0.03] p-6 border-l-2 border-ink-muted">
+        <p class="text-ink italic leading-relaxed">
+          "所有的年轻人都知道不会用 AI 就找不到工作，但他们只能每个月浅尝辄止。Token 太贵了，如果使用 Claude MAX，那就是他们一半的生活费。"
+        </p>
+        <div class="mt-4">
+          <a href="https://x.com/CTracy0803/status/2038452420330811482" class="text-xs font-mono text-ink-muted hover:text-vermillion transition-colors">— @CTracy0803</a>
+        </div>
+      </div>
+
+      <p class="mt-6 text-lg font-medium text-ink">
+        《说文解字》让文字不再是贵族的专属。解字计划要做同样的事：让 token 不再是大学生的门槛。
+      </p>
+    </section>
+
+    <!-- Stages -->
+    <section class="mb-24">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold font-serif">三个阶段</h2>
+        <span class="text-xs font-mono text-ink-muted tracking-widest uppercase">Three Stages</span>
+      </div>
+
+      <p class="text-ink-muted mb-8">
+        体验 → 实践 → 长期支持。每个阶段设有门槛，目的不是淘汰，而是识别真正想做事的人。面向所有在校大学生，不限专业，不限基础。
+      </p>
+
+      <div class="space-y-6">
+        <!-- Stage 1 -->
+        <div class="border-l border-vermillion/40 bg-ink/[0.02] rounded-sm p-6">
+          <div class="flex justify-between items-baseline">
+            <h3 class="text-lg font-bold font-serif">体验期 | 600 人</h3>
+            <span class="border border-vermillion/30 text-vermillion text-xs font-serif px-1.5 py-0.5">1 个月</span>
+          </div>
+          <p class="text-sm text-ink-muted mt-1">让每一个想接触 AI 的大学生，都有机会亲手体验。</p>
+          
+          <div class="mt-4 space-y-1 text-sm">
+            <div class="flex gap-2">
+              <span class="text-vermillion">·</span>
+              <span>AI Coding Plan — 支持 Claude Code、Cline、Roo Code 等主流编程工具</span>
+            </div>
+            <div class="flex gap-2">
+              <span class="text-vermillion">·</span>
+              <span>当前供应商：MiniMax Plus 极速版（100 TPS 极速推理）</span>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-border/50">
+            <p class="text-xs font-mono text-ink-muted uppercase tracking-wider">门槛：提交申请 PR · 每批 100 人 · 先到先得</p>
+            <p class="mt-3 text-xs text-ink-muted italic">
+              "这是无条件赠送——不要求提交成果。但如果你想进入第二阶段，你需要在体验期结束后拿出东西来。"
+            </p>
+          </div>
+        </div>
+
+        <!-- Stage 2 -->
+        <div class="border-l-2 border-vermillion bg-ink/[0.02] rounded-sm p-6">
+          <div class="flex justify-between items-baseline">
+            <h3 class="text-lg font-bold font-serif">深度资助 | ~60 人</h3>
+            <span class="border border-vermillion/30 text-vermillion text-xs font-serif px-1.5 py-0.5">3 个月</span>
+          </div>
+          <p class="text-sm text-ink-muted mt-1">第一阶段让你体验 AI，第二阶段让你用 AI 做出东西。</p>
+
+          <div class="mt-4 space-y-1 text-sm">
+            <div class="flex gap-2">
+              <span class="text-vermillion">·</span>
+              <span>AI Coding Plan — 3 个月</span>
+            </div>
+            <div class="flex gap-2">
+              <span class="text-vermillion">·</span>
+              <span>云服务器 — 1 年</span>
+            </div>
+            <div class="flex gap-2">
+              <span class="text-vermillion">·</span>
+              <span>API Token — $50 额度（OpenRouter）</span>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-border/50">
+            <p class="text-xs font-mono text-ink-muted uppercase tracking-wider">门槛：50 star GitHub 项目 · AI agent 辅助创建 · 发起人人工评审</p>
+            <p class="mt-3 text-xs text-ink-muted">
+              "达到 50 star 即可获得与发起人的 1v1 交流。通过评审后，还有项目宣传和实习对接。"
+            </p>
+          </div>
+        </div>
+
+        <!-- Stage 3 -->
+        <div class="border-l-4 border-vermillion bg-ink/[0.02] rounded-sm p-6">
+          <div class="flex justify-between items-baseline">
+            <h3 class="text-lg font-bold font-serif">长期资助 | 3-5 人</h3>
+            <span class="border border-vermillion/30 text-vermillion text-xs font-serif px-1.5 py-0.5">1 年</span>
+          </div>
+          <p class="text-sm text-ink-muted mt-1">持续学习的人，值得持续的支持。</p>
+
+          <div class="mt-4 space-y-1 text-sm">
+            <div class="flex gap-2">
+              <span class="text-vermillion">·</span>
+              <span>AI Coding Plan — 1 年</span>
+            </div>
+            <div class="flex gap-2">
+              <span class="text-vermillion">·</span>
+              <span>API Token — $200 额度</span>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-border/50">
+            <p class="text-xs font-mono text-ink-muted uppercase tracking-wider">门槛：从第二阶段中选拔 · 综合评估</p>
+            <p class="mt-3 text-xs text-ink-muted italic">
+              "没有固定公式——我们关注你是否在持续学习，做出的东西是否解决了真实问题，以及你是否有长期做下去的意愿。"
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How to Apply -->
+    <section class="mb-24">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold font-serif">如何申请</h2>
+        <span class="text-xs font-mono text-ink-muted tracking-widest uppercase">How to Apply</span>
+      </div>
+
+      <div class="border border-vermillion/30 p-3 text-sm mb-8">
+        <span class="text-vermillion font-serif mr-2">【草案阶段】</span>
+        <span class="text-ink-muted">所有政策和规则仍在完善中，预计 2026-05-15 正式发布。第一阶段申请尚未开放。</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="border-y border-border py-6">
+          <h3 class="font-serif font-bold">让你的 code agent 帮你申请</h3>
+          <div class="bg-ink/[0.03] p-4 font-mono text-sm mt-3 border-l border-ink/10">
+            我要申请 jiezi-ai/grant
+          </div>
+          <p class="text-xs text-ink-muted mt-3">
+            "告诉 Claude Code、Cursor 或 Cline 这句话，agent 会自动完成 Star、Fork、创建申请文件、提交 PR。"
+          </p>
+        </div>
+
+        <div class="border-y border-border py-6">
+          <h3 class="font-serif font-bold">手动申请</h3>
+          <ol class="text-sm mt-3 list-decimal pl-5 space-y-1 text-ink-muted">
+            <li>Star 仓库</li>
+            <li>Fork 仓库</li>
+            <li>在 <code class="bg-ink/[0.05] px-1 rounded">students/batch-1/</code> 下创建你的用户名.md</li>
+            <li>提交 PR</li>
+            <li>通过 edu 邮箱验证后发放资源</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Founder -->
+    <section class="mb-24">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold font-serif">发起人</h2>
+        <span class="text-xs font-mono text-ink-muted tracking-widest uppercase">Founder</span>
+      </div>
+
+      <p class="text-base leading-relaxed text-ink">
+        我是 <a href="https://x.com/yan5xu" class="text-vermillion hover:underline">@yan5xu</a>（许长鹏），前 Manus AI & Monica AI 工程师。2023 年加入 AI Agent 浪潮，参与构建了 Manus（世界级 AI Agent 产品）和 Monica（1000 万用户）。离开后投入开源社区，创建了 Pinix 和 bb-browser。
+      </p>
+
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        我也曾是大学生。我理解那种感受——明明知道一个工具能改变自己的轨迹，却因为成本只能浅尝辄止。解字计划第一年，我个人出资 15 万元人民币，资助 600 名大学生接触和深度使用 AI。
+      </p>
+    </section>
+
+    <!-- Transparency -->
+    <section class="mb-24">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold font-serif">公开透明</h2>
+        <span class="text-xs font-mono text-ink-muted tracking-widest uppercase">Transparency</span>
+      </div>
+
+      <p class="text-ink-muted mb-6">
+        从前有逸夫楼、田家炳中学，token 助学是新事物，但透明和信任的原则不变。所有政策、预算、支出记录对外公开。
+      </p>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {[
+          { label: "政策", path: "policy/", url: "https://github.com/jiezi-ai/grant/tree/main/policy" },
+          { label: "预算", path: "BUDGET.md", url: "https://github.com/jiezi-ai/grant/blob/main/BUDGET.md" },
+          { label: "时间线", path: "TIMELINE.md", url: "https://github.com/jiezi-ai/grant/blob/main/TIMELINE.md" },
+          { label: "支出记录", path: "records/spending.md", url: "https://github.com/jiezi-ai/grant/blob/main/records/spending.md" },
+          { label: "批次记录", path: "records/batches.md", url: "https://github.com/jiezi-ai/grant/blob/main/records/batches.md" },
+          { label: "beancount 账本", path: "ledger/", url: "https://github.com/jiezi-ai/grant/tree/main/ledger" },
+        ].map(item => (
+          <a href={item.url} class="block border border-border p-4 hover:border-vermillion transition-colors group flex justify-between items-start">
+            <div>
+              <span class="font-serif font-bold text-sm group-hover:text-vermillion">{item.label}</span>
+              <span class="block text-[10px] text-ink-muted mt-1 font-mono uppercase tracking-tighter">{item.path}</span>
+            </div>
+            <span class="text-ink-muted group-hover:text-vermillion transition-colors text-sm">→</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Budget -->
+    <section class="mb-24">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold font-serif">预算</h2>
+        <span class="text-xs font-mono text-ink-muted tracking-widest uppercase">Budget</span>
+      </div>
+
+      <p class="text-ink-muted mb-6">第一年总预算 150,000 CNY，发起人个人出资。</p>
+
+      <div class="border-y-2 border-ink py-4 font-mono text-sm">
+        <div class="divide-y divide-dashed divide-border/50">
+          <div class="flex justify-between py-2">
+            <span>第一阶段 体验期</span>
+            <div class="flex gap-4">
+              <span>58,800 CNY</span>
+              <span class="text-ink-muted w-10 text-right">43%</span>
+            </div>
+          </div>
+          <div class="flex justify-between py-2">
+            <span>第二阶段 深度资助</span>
+            <div class="flex gap-4">
+              <span>63,240 CNY</span>
+              <span class="text-ink-muted w-10 text-right">46%</span>
+            </div>
+          </div>
+          <div class="flex justify-between py-2">
+            <span>第三阶段 长期资助</span>
+            <div class="flex gap-4">
+              <span>13,080 CNY</span>
+              <span class="text-ink-muted w-10 text-right">10%</span>
+            </div>
+          </div>
+          <div class="flex justify-between py-2">
+            <span>运营成本</span>
+            <div class="flex gap-4">
+              <span>≈1,339 CNY</span>
+              <span class="text-ink-muted w-10 text-right">1%</span>
+            </div>
+          </div>
+        </div>
+        <div class="border-t-2 border-ink pt-2 mt-2 flex justify-between font-bold">
+          <span>合计</span>
+          <div class="flex gap-4">
+            <span>≈136,459 CNY</span>
+            <span class="text-ink-muted w-10 text-right">100%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 bg-ink/[0.02] p-6 font-mono text-sm border border-border/50">
+        <div class="flex justify-between items-baseline mb-3">
+          <span class="text-ink-muted">承诺注资</span>
+          <span class="tabular-nums font-medium">{budget?.committed?.toLocaleString() ?? "150,000"} CNY</span>
+        </div>
+        <div class="flex justify-between items-baseline mb-3">
+          <span class="text-ink-muted">已支出</span>
+          <span class="tabular-nums font-medium">{budget?.spent?.toLocaleString() ?? "0"} CNY</span>
+        </div>
+        <div class="flex justify-between items-baseline border-t border-ink/10 pt-3 mt-3">
+          <span class="font-bold">实时余额</span>
+          <span class="font-bold tabular-nums text-lg text-vermillion">{budget?.remaining?.toLocaleString() ?? "150,000"} CNY</span>
+        </div>
+        <p class="text-[10px] text-ink-muted mt-4 uppercase tracking-widest">数据每日 00:00 UTC+8 更新</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-32 pt-12 border-t border-border text-center pb-12">
+      <div class="text-sm text-ink-muted mb-8 space-y-2">
+        <p>
+          发起人：<a href="https://x.com/yan5xu" class="text-vermillion hover:underline">@yan5xu</a>
+          &nbsp;·&nbsp;
+          <a href="https://github.com/jiezi-ai/grant" class="text-vermillion hover:underline">GitHub</a>
+          &nbsp;·&nbsp;
+          <a href="https://github.com/jiezi-ai/grant/tree/main/policy" class="text-vermillion hover:underline">政策</a>
+        </p>
+        <p class="text-[10px] uppercase tracking-widest">
+          Content Licensed under <a href="https://creativecommons.org/licenses/by/4.0/" class="underline hover:text-vermillion">CC BY 4.0</a>
+        </p>
+      </div>
+      <div class="inline-block bg-vermillion text-white font-serif text-xs px-3 py-1.5 select-none hover:scale-105 transition-transform duration-300 mb-8" style="clip-path: polygon(2% 0%, 100% 1%, 98% 100%, 0% 98%)">
+        解字
+      </div>
+    </footer>
+  </main>
+</Base>
