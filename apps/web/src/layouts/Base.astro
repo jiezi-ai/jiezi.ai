@@ -1,9 +1,16 @@
 ---
 interface Props {
   title?: string;
+  description?: string;
 }
 
-const { title = "解字计划 — Jiezi Grant" } = Astro.props;
+const {
+  title = "解字计划 — Jiezi Grant",
+  description = "资助大学生获得 AI token，解开他们和 AI 之间的门槛。第一年个人出资 15 万元，资助 600 名大学生接触和深度使用 AI。"
+} = Astro.props;
+
+const url = "https://jiezi.ai";
+const ogImage = `${url}/og.png`;
 ---
 
 <!doctype html>
@@ -11,7 +18,24 @@ const { title = "解字计划 — Jiezi Grant" } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="资助大学生获得 AI token，解开他们和 AI 之间的门槛。" />
+    <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content="解字计划" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@yan5xu" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
     <title>{title}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
