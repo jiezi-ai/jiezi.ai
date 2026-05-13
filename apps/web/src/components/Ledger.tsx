@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 const API_BASE =
-  (import.meta as any).env?.PUBLIC_API_URL || "https://jiezi-api.lueco-x.workers.dev";
+  (import.meta as any).env?.PUBLIC_API_URL || "https://api.jiezi.ai";
 
 interface BudgetData {
   committed: number;
