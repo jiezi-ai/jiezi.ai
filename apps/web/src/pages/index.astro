@@ -18,15 +18,15 @@ import Ledger from "../components/Ledger";
       </p>
 
       <p class="text-sm text-ink-muted leading-relaxed mb-5">
-        个人出资 15 万元，分三个阶段为在校大学生提供 AI Coding Plan、云服务器和 API Token。不限专业，不限基础。
+        个人出资 15 万元，分三个阶段为在校大学生提供 <span class="term" data-tip="AI 编程 Agent 的付费订阅，AI 自主帮你写代码、做项目、调试部署">AI Coding Plan</span>、云服务器和 <span class="term" data-tip="在你自己的应用中调用 AI 的额度，让 AI 成为你产品的一部分">API Token</span>。不限专业，不限基础。
       </p>
 
       <div class="flex flex-wrap items-center gap-4 mb-6">
-        <a href="https://github.com/jiezi-ai/grant" class="inline-block bg-vermillion text-white font-medium text-sm px-5 py-2.5 hover:bg-vermillion-hover transition-colors">
-          查看完整方案
-        </a>
-        <a href="#apply" class="inline-block border border-ink text-ink font-medium text-sm px-5 py-2.5 hover:bg-ink hover:text-paper transition-colors">
+        <a href="#apply" class="inline-block bg-vermillion text-white font-medium text-sm px-5 py-2.5 hover:bg-vermillion-hover transition-colors">
           申请资助
+        </a>
+        <a href="https://github.com/jiezi-ai/grant" class="inline-block border border-ink text-ink font-medium text-sm px-5 py-2.5 hover:bg-ink hover:text-paper transition-colors">
+          查看完整方案
         </a>
       </div>
 
@@ -88,12 +88,12 @@ import Ledger from "../components/Ledger";
           <p class="text-sm text-ink-muted mt-1">让每一个想接触 AI 的大学生，都有机会亲手体验。</p>
 
           <div class="mt-4 space-y-1 text-sm">
-            <span class="flex gap-2"><span class="text-vermillion">·</span>AI Coding Plan，支持 Claude Code、Cline、Roo Code 等</span>
+            <span class="flex gap-2"><span class="text-vermillion">·</span><span class="term" data-tip="AI 编程 Agent 的付费订阅，AI 自主帮你写代码、做项目、调试部署">AI Coding Plan</span>，支持 Claude Code、Cline、Roo Code 等</span>
             <span class="flex gap-2"><span class="text-vermillion">·</span>无条件赠送，不要求提交成果</span>
           </div>
 
           <div class="mt-4 pt-4 border-t border-border/50 text-xs text-ink-muted">
-            <p class="font-mono uppercase tracking-wider">申请方式：提交 PR · 每批 100 人 · 先到先得</p>
+            <p class="font-mono uppercase tracking-wider">申请方式：提交 <span class="term" data-tip="Pull Request，把你的申请文件提交给我们审核">PR</span> · 每批 100 人 · 先到先得</p>
           </div>
         </div>
 
@@ -108,7 +108,7 @@ import Ledger from "../components/Ledger";
           <div class="mt-4 space-y-1 text-sm">
             <span class="flex gap-2"><span class="text-vermillion">·</span>AI Coding Plan · 3 个月</span>
             <span class="flex gap-2"><span class="text-vermillion">·</span>云服务器 · 1 年</span>
-            <span class="flex gap-2"><span class="text-vermillion">·</span>API Token · $50 额度</span>
+            <span class="flex gap-2"><span class="text-vermillion">·</span><span class="term" data-tip="在你自己的应用中调用 AI 的额度，让 AI 成为你产品的一部分">API Token</span> · $50 额度</span>
           </div>
 
           <div class="mt-4 pt-4 border-t border-border/50 text-xs text-ink-muted">
@@ -127,7 +127,7 @@ import Ledger from "../components/Ledger";
 
           <div class="mt-4 space-y-1 text-sm">
             <span class="flex gap-2"><span class="text-vermillion">·</span>AI Coding Plan · 1 年</span>
-            <span class="flex gap-2"><span class="text-vermillion">·</span>API Token · $200 额度</span>
+            <span class="flex gap-2"><span class="text-vermillion">·</span><span class="term" data-tip="在你自己的应用中调用 AI 的额度，让 AI 成为你产品的一部分">API Token</span> · $200 额度</span>
           </div>
 
           <div class="mt-4 pt-4 border-t border-border/50 text-xs text-ink-muted">
@@ -163,11 +163,11 @@ import Ledger from "../components/Ledger";
 
         <div class="border-y border-border py-6">
           <h3 class="font-serif font-bold">手动申请</h3>
-          <ol class="text-sm mt-3 list-decimal pl-5 space-y-1 text-ink-muted">
-            <li>Star 仓库</li>
-            <li>Fork 仓库</li>
+          <ol class="text-sm mt-3 list-decimal pl-5 space-y-2 text-ink-muted">
+            <li><span class="term" data-tip="点击仓库右上角的 Star 按钮，相当于收藏">Star</span> 仓库</li>
+            <li><span class="term" data-tip="点击 Fork 按钮，把仓库复制一份到你自己的 GitHub 账号下">Fork</span> 仓库</li>
             <li>在 <code class="bg-ink/[0.05] px-1 rounded">students/batch-1/</code> 下创建你的用户名.md</li>
-            <li>提交 PR</li>
+            <li>提交 <span class="term" data-tip="Pull Request，把你的修改提交给我们审核的方式">PR</span></li>
             <li>通过 edu 邮箱验证后发放资源</li>
           </ol>
         </div>

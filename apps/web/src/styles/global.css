@@ -56,3 +56,31 @@
     font-family: var(--font-mono);
   }
 }
+
+.term {
+  border-bottom: 1px dashed var(--color-ink-muted);
+  cursor: help;
+  position: relative;
+}
+
+.term:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-size: 0.75rem;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.4;
+  padding: 0.5rem 0.75rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  max-width: 280px;
+  white-space: normal;
+  z-index: 10;
+  pointer-events: none;
+  margin-bottom: 4px;
+}
