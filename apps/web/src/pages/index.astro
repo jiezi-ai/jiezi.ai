@@ -152,26 +152,27 @@ import Ledger from "../components/Ledger";
         <span class="text-ink-muted">所有政策仍在完善中，预计 2026-05-15 正式发布。第一阶段申请尚未开放。</span>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-4">
         <div class="border-y border-border py-6">
-          <h3 class="font-serif font-bold">用 <span class="term" data-tip="AI 编程 Agent，能自主帮你完成编程任务的 AI 工具">code agent</span> 申请</h3>
-          <div class="bg-ink/[0.03] p-4 font-mono text-sm mt-3 border-l border-ink/10">
-            我要申请 jiezi-ai/grant
-          </div>
-          <p class="text-xs text-ink-muted mt-3">
-            在 <a href="https://claude.ai/code" class="text-vermillion hover:underline">Claude Code</a>、<a href="https://cursor.com" class="text-vermillion hover:underline">Cursor</a> 或 <a href="https://cline.bot" class="text-vermillion hover:underline">Cline</a> 中输入这句话，agent 会自动完成全部申请流程。
+          <h3 class="font-serif font-bold mb-3">三步完成申请</h3>
+          <ol class="text-sm list-decimal pl-5 space-y-3 text-ink-muted">
+            <li>在 <a href="/apply" class="text-vermillion hover:underline font-medium">jiezi.ai/apply</a> 填写信息，获取申请码（个人信息不会公开）</li>
+            <li>到 <a href="https://github.com/jiezi-ai/grant/issues/new?template=apply.yml" class="text-vermillion hover:underline">GitHub 提交 Issue</a>，填入申请码</li>
+            <li>查收 edu 邮箱验证邮件，点击验证链接</li>
+          </ol>
+          <p class="text-xs text-ink-muted mt-4">
+            验证完成后添加发起人微信，即可领取 AI Coding Plan。
           </p>
         </div>
 
-        <div class="border-y border-border py-6">
-          <h3 class="font-serif font-bold">手动申请</h3>
-          <ol class="text-sm mt-3 list-decimal pl-5 space-y-2 text-ink-muted">
-            <li><span class="term" data-tip="点击仓库右上角的 Star 按钮，相当于收藏">Star</span> 仓库</li>
-            <li><span class="term" data-tip="点击 Fork 按钮，把仓库复制一份到你自己的 GitHub 账号下">Fork</span> 仓库</li>
-            <li>在 <code class="bg-ink/[0.05] px-1 rounded">students/batch-1/</code> 下创建你的用户名.md</li>
-            <li>提交 <span class="term" data-tip="Pull Request，把你的修改提交给我们审核的方式">PR</span></li>
-            <li>通过 edu 邮箱验证后发放资源</li>
-          </ol>
+        <div class="bg-ink/[0.03] p-5 border-l border-ink/10">
+          <h3 class="font-serif font-bold text-sm mb-2">用 <span class="term" data-tip="AI 编程 Agent，能自主帮你完成编程任务的 AI 工具">code agent</span> 申请</h3>
+          <div class="font-mono text-sm mb-2">
+            我要申请 jiezi-ai/grant
+          </div>
+          <p class="text-xs text-ink-muted">
+            在 <a href="https://claude.ai/code" class="text-vermillion hover:underline">Claude Code</a>、<a href="https://cursor.com" class="text-vermillion hover:underline">Cursor</a> 或 <a href="https://cline.bot" class="text-vermillion hover:underline">Cline</a> 中说这句话，agent 会自动完成全部流程——如果你还不会，没关系，这正是我们想帮你学会的。
+          </p>
         </div>
       </div>
     </section>

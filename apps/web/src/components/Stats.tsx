@@ -7,6 +7,7 @@ const API_BASE =
 interface Batch {
   id: number;
   status: "preparing" | "open" | "closed";
+  applicants: number;
   approved: number;
 }
 
@@ -40,6 +41,7 @@ export default function Stats() {
   const defaultBatches: Batch[] = Array.from({ length: 6 }, (_, i) => ({
     id: i + 1,
     status: "preparing" as const,
+    applicants: 0,
     approved: 0,
   }));
 
@@ -76,6 +78,11 @@ export default function Stats() {
                   /100
                 </span>
               </p>
+              {batch.applicants > 0 && batch.applicants !== batch.approved && (
+                <p className="text-[10px] font-mono text-ink-muted">
+                  {batch.applicants} 人申请
+                </p>
+              )}
               <p className="text-[11px] font-mono text-ink-muted mt-0.5">
                 第 {batch.id} 批
               </p>
