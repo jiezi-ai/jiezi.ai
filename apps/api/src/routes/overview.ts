@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import type { Env } from "../index";
 import type { Overview, BatchSummary, Milestone } from "@jiezi/shared";
 import { parseMarkdownTable } from "../services/markdown";
+import { generateReport } from "../services/beancount";
 
 const TOTAL_BATCHES = 6;
 
@@ -13,11 +14,13 @@ app.get("/", async (c) => {
   const cached = await cache.get<Overview>("overview");
   if (cached) return c.json(cached);
 
-  const [milestonesMd, batchCounts] = await Promise.all([
+  const [milestonesMd, batchCounts, mainBc, yearBc] = await Promise.all([
     github.getFile("records/milestones.md"),
     c.env.DB.prepare(
       "SELECT batch, status, COUNT(*) as cnt FROM applications WHERE status != 'rejected' GROUP BY batch, status",
     ).all(),
+    github.getFile("ledger/main.beancount"),
+    github.getFile("ledger/2026.beancount"),
   ]);
 
   const batchData = new Map<number, { applicants: number; approved: number }>();
@@ -55,10 +58,12 @@ app.get("/", async (c) => {
 
   const stage1Total = batches.reduce((sum, b) => sum + b.approved, 0);
 
+  const budget = mainBc && yearBc ? generateReport(mainBc, yearBc) : null;
+
   const overview: Overview = {
-    totalBudget: 150000,
-    totalSpent: 0,
-    remaining: 150000,
+    totalBudget: budget?.committed ?? 150000,
+    totalSpent: budget?.spent ?? 0,
+    remaining: budget?.remaining ?? 150000,
     currency: "CNY",
     batches,
     funnel: {

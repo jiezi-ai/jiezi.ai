@@ -16,12 +16,12 @@ interface ApplicationData {
 
 const STATUS_LABELS: Record<string, { label: string; desc: string }> = {
   draft: {
-    label: "待提交 PR",
-    desc: "请在 GitHub 提交包含申请码的 PR",
+    label: "待提交 Issue",
+    desc: "请在 GitHub 提交包含申请码的 Issue",
   },
   rejected: {
     label: "需修改",
-    desc: "申请信息需要修改，请更新后重新提交 PR",
+    desc: "申请信息需要修改，请更新后重新提交 Issue",
   },
   approved: {
     label: "审核通过",
@@ -37,11 +37,11 @@ const STATUS_LABELS: Record<string, { label: string; desc: string }> = {
   },
   verified: {
     label: "已验证",
-    desc: "请添加发起人微信领取资源",
+    desc: "AI 资源已发放到你的邮箱",
   },
   fulfilled: {
     label: "资源已发放",
-    desc: "Coding Plan 已发放，开始你的 AI 之旅吧",
+    desc: "配置信息已发送到你的邮箱，开始你的 AI 之旅吧",
   },
 };
 
@@ -226,7 +226,7 @@ export default function ApplyStatus({ code }: { code: string }) {
           <div className="flex justify-between py-2 border-b border-border/50">
             <span className="text-ink-muted">GitHub</span>
             <span className="font-mono font-medium">
-              {data.github_id ? `@${data.github_id}` : "待提交 PR"}
+              {data.github_id ? `@${data.github_id}` : "待提交 Issue"}
             </span>
           </div>
           {data.motivation && (

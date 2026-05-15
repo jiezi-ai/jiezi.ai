@@ -1,0 +1,11 @@
+---
+import Base from "../../layouts/Base.astro";
+import AdminPage from "../../components/AdminPage";
+---
+
+<Base title="管理后台 — 解字计划">
+  <main class="max-w-5xl mx-auto px-6 pt-8 pb-24">
+    <a href="/" class="inline-block text-sm text-ink-muted hover:text-ink font-mono mb-8">← 返回首页</a>
+    <AdminPage client:only="react" />
+  </main>
+</Base>

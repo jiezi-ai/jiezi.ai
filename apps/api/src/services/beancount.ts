@@ -94,13 +94,13 @@ export function generateReport(
 
   for (const tx of transactions) {
     const hasCommittedIncome = tx.postings.some(
-      (p) => p.account.startsWith("Income:Founder:Committed"),
+      (p) => p.account.includes(":Committed"),
     );
 
     for (const posting of tx.postings) {
       if (
         hasCommittedIncome &&
-        posting.account.startsWith("Assets:Receivable:Founder") &&
+        posting.account.startsWith("Assets:Receivable:") &&
         posting.amount > 0
       ) {
         committed += posting.amount;

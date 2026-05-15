@@ -38,6 +38,10 @@ app.post("/", async (c) => {
 
   const emailLower = body.edu_email.toLowerCase().trim();
 
+  if (!emailLower.endsWith(".edu.cn") && !emailLower.endsWith(".edu")) {
+    return c.json({ error: "请使用 edu 邮箱（以 .edu.cn 或 .edu 结尾）" }, 400);
+  }
+
   // 检查邮箱是否已有有效申请
   const existing = await c.env.DB.prepare(
     "SELECT apply_code, status FROM applications WHERE edu_email = ? AND status != 'rejected'",
@@ -71,7 +75,7 @@ app.post("/", async (c) => {
   return c.json({
     apply_code: applyCode,
     status: "draft",
-    message: "申请码已生成，请在 GitHub 提交 PR 完成申请",
+    message: "申请码已生成，请在 GitHub 提交 Issue 完成申请",
   });
 });
 

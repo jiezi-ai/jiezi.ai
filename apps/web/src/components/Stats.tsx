@@ -105,7 +105,7 @@ export default function Stats() {
           ))}
         </div>
         <p className="text-xs text-ink-muted mt-3">
-          每人获得 1 个月 AI Coding Plan，支持 Claude Code、Cline 等主流编程工具
+          每人获得 $20 API Token，支持 Claude、Gemini、GPT、DeepSeek 等 20+ 模型
         </p>
       </div>
 

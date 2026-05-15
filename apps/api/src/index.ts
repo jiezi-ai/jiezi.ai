@@ -13,6 +13,8 @@ import webhook from "./routes/webhook";
 import verify from "./routes/verify";
 import apply from "./routes/apply";
 import students from "./routes/students";
+import admin from "./routes/admin";
+import sponsors from "./routes/sponsors";
 
 export interface Env {
   CACHE: KVNamespace;
@@ -22,7 +24,12 @@ export interface Env {
   GITHUB_TOKEN?: string;
   RESEND_API_KEY?: string;
   GEMINI_API_KEY?: string;
-  WECHAT_QR_URL?: string;
+  WECHAT_GROUP_QR_URL?: string;
+  ADMIN_TOKEN?: string;
+  NEWAPI_BASE_URL?: string;
+  NEWAPI_STUDENT_URL?: string;
+  NEWAPI_ADMIN_USER?: string;
+  NEWAPI_ADMIN_PASS?: string;
 }
 
 declare module "hono" {
@@ -59,6 +66,8 @@ app.route("/api/webhook", webhook);
 app.route("/api/verify", verify);
 app.route("/api/apply", apply);
 app.route("/api/students", students);
+app.route("/api/admin", admin);
+app.route("/api/sponsors", sponsors);
 
 app.get("/", (c) => c.json({ name: "jiezi-api", status: "ok" }));
 

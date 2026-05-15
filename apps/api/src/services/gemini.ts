@@ -11,7 +11,7 @@ export interface ReviewResult {
 
 const REVIEW_PROMPT = `你是解字计划的申请审核员。解字计划是一个大学生 AI 资助项目，为在校大学生提供免费的 AI Coding Plan。
 
-请从以下 PR 内容中提取信息并做出审核判断。
+请从以下申请信息中提取字段并做出审核判断。
 
 ## 提取字段
 - github_id: GitHub 用户名
@@ -48,10 +48,10 @@ const REVIEW_PROMPT = `你是解字计划的申请审核员。解字计划是一
 
 export async function reviewApplication(
   apiKey: string,
-  prContent: string,
+  applicationInfo: string,
   githubUsername: string,
 ): Promise<ReviewResult> {
-  const userMessage = `PR 提交者: ${githubUsername}\n\nPR 文件内容:\n${prContent}`;
+  const userMessage = `GitHub 用户: ${githubUsername}\n\n申请信息:\n${applicationInfo}`;
 
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",

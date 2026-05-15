@@ -25,7 +25,7 @@ function createMockEnv(dbResult: any = null) {
     DB: mockDB as unknown as D1Database,
     GITHUB_OWNER: "jiezi-ai",
     GITHUB_REPO: "grant",
-    WECHAT_QR_URL: "https://example.com/qr.png",
+    WECHAT_GROUP_QR_URL: "https://example.com/group-qr.png",
   };
 }
 
@@ -64,8 +64,7 @@ describe("verify endpoint", () => {
 
     expect(html).toContain("验证成功");
     expect(html).toContain("zhangsan");
-    expect(html).toContain("https://example.com/qr.png");
-    expect(html).toContain("AI Coding Plan");
+    expect(html).toContain("AI 编程资源");
   });
 
   it("returns already-verified page for re-verification", async () => {
