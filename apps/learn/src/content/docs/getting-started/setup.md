@@ -38,42 +38,9 @@ npm install -g @anthropic-ai/claude-code
 claude --version
 ```
 
-### 方式一：cc-switch（推荐）
+### 配置
 
-[cc-switch](https://github.com/nicepkg/cc-switch) 可以一键管理 Claude Code 的 API 配置，支持多个配置之间快速切换。
-
-**macOS / Linux：**
-
-```bash
-brew tap nicepkg/tap
-brew install --cask cc-switch
-```
-
-**Windows：**
-
-前往 [cc-switch Releases](https://github.com/nicepkg/cc-switch/releases) 下载安装包。
-
-安装后：
-
-1. 启动 cc-switch，点击右上角 "+"
-2. 选择 **自定义** 供应商
-3. Base URL 填邮件中的 API 地址
-4. API Key 填邮件中的 Key
-5. 模型名称按需选择（推荐先用 `deepseek/deepseek-v4-flash`）
-6. 点击 "添加"，回首页点击 "启用"
-
-### 方式二：手动配置
-
-**第 1 步**：先清除可能冲突的环境变量：
-
-```bash
-unset ANTHROPIC_AUTH_TOKEN
-unset ANTHROPIC_BASE_URL
-```
-
-> 如果这些变量在 `~/.bashrc` 或 `~/.zshrc` 中被永久导出，请删除对应行。
-
-**第 2 步**：编辑 Claude Code 配置文件：
+编辑 Claude Code 配置文件：
 
 - macOS / Linux：`~/.claude/settings.json`
 - Windows：`用户目录/.claude/settings.json`
@@ -83,13 +50,17 @@ unset ANTHROPIC_BASE_URL
   "env": {
     "ANTHROPIC_BASE_URL": "邮件中的 API 地址",
     "ANTHROPIC_AUTH_TOKEN": "邮件中的 API Key",
-    "API_TIMEOUT_MS": "3000000",
+    "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
-  }
+  },
+  "model": "deepseek/deepseek-v4-flash",
+  "effortLevel": "medium"
 }
 ```
 
-**第 3 步**：编辑 `~/.claude.json`（Windows 为 `用户目录/.claude.json`）：
+> **注意 JSON 格式**：每个 key 和 value 都要用英文双引号 `"` 包裹，key 之间用英文逗号 `,` 分隔，不要用中文标点。
+
+然后编辑 `~/.claude.json`（Windows 为 `用户目录/.claude.json`），跳过首次登录引导：
 
 ```json
 {
@@ -97,40 +68,24 @@ unset ANTHROPIC_BASE_URL
 }
 ```
 
+**如果之前通过 shell 配置过环境变量**，需要先清除，否则会覆盖 `settings.json` 的配置：
+
+```bash
+unset ANTHROPIC_AUTH_TOKEN
+unset ANTHROPIC_BASE_URL
+```
+
+> 如果这些变量在 `~/.bashrc` 或 `~/.zshrc` 中被永久导出，请删除对应行。
+
 ### 验证配置
 
-启动 Claude Code 后，输入以下命令验证：
+启动 Claude Code 后，输入 `/status` 确认 `ANTHROPIC_BASE_URL` 指向邮件中的地址。
 
-```
-/status
-```
+输入 `/model` 可以看到所有可用模型列表（由 `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY` 自动从 API 拉取），按需切换。
 
-确认 `ANTHROPIC_BASE_URL` 指向邮件中的地址。
+### VS Code / JetBrains 插件
 
-```
-/model
-```
-
-确认当前模型显示正常。
-
-### VS Code 插件
-
-如果你用 VS Code，可以安装 [Claude Code for VS Code](https://marketplace.visualstudio.com/items?itemName=anthropics.claude-code) 插件：
-
-1. 安装插件
-2. 如果已配置好 `~/.claude/settings.json`，插件会自动读取环境变量，无需额外设置
-3. 如果没有，点击 `Edit in settings.json`，添加：
-
-```json
-{
-  "claudeCode.environmentVariables": [
-    { "name": "ANTHROPIC_BASE_URL", "value": "邮件中的 API 地址" },
-    { "name": "ANTHROPIC_AUTH_TOKEN", "value": "邮件中的 API Key" },
-    { "name": "API_TIMEOUT_MS", "value": "3000000" },
-    { "name": "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC", "value": "1" }
-  ]
-}
-```
+Claude Code 有 [VS Code](https://marketplace.visualstudio.com/items?itemName=anthropics.claude-code) 和 JetBrains 插件。安装后，插件会自动读取 `~/.claude/settings.json` 的配置，无需额外设置。
 
 ## 其他支持的工具
 
@@ -147,15 +102,18 @@ unset ANTHROPIC_BASE_URL
 
 ## 可用模型
 
+在 Claude Code 中输入 `/model` 可查看完整列表。以下是部分模型：
+
 | 模型 | 说明 |
 |------|------|
-| minimax/minimax-m2.7 | MiniMax 最新模型，编程能力强 |
-| minimax/minimax-m2.5 | MiniMax 上一代，性价比高 |
-| deepseek/deepseek-v4-pro | DeepSeek 最新旗舰 |
-| deepseek/deepseek-v4-flash | DeepSeek 快速版，推荐日常使用 |
-| z-ai/glm-5.1 | 智谱 GLM 最新模型 |
+| **deepseek/deepseek-v4-flash** | 推荐日常使用，快且省额度 |
+| deepseek/deepseek-v4-pro | DeepSeek 旗舰 |
+| anthropic/claude-sonnet-4.6 | Claude 最新 |
+| anthropic/claude-opus-4.7 | Claude 最强推理（费额度） |
+| openai/gpt-5.5 | GPT 最新旗舰 |
+| google/gemini-3.1-pro-preview | Gemini 最新 |
 
-> 选择建议：日常编程用 `deepseek/deepseek-v4-flash`（快且便宜），复杂任务用 `deepseek/deepseek-v4-pro` 或 `minimax/minimax-m2.7`。
+> 选择建议：日常用 `deepseek/deepseek-v4-flash`，复杂任务用 `anthropic/claude-sonnet-4.6` 或 `openai/gpt-5.5`。用 `/model` 查看全部可用模型。
 
 ## 查看用量
 
@@ -186,8 +144,12 @@ echo $ANTHROPIC_AUTH_TOKEN
 echo $ANTHROPIC_BASE_URL
 ```
 
-如果有输出，说明还有旧变量未清除。用 `unset` 清除后重启终端。或者检查 `~/.bashrc` / `~/.zshrc` 中是否有旧的导出语句。
+如果有输出，说明 shell 里的环境变量覆盖了 `settings.json`。用 `unset` 清除后重启终端，或者删除 `~/.bashrc` / `~/.zshrc` 中对应的 `export` 行。
+
+### /model 看不到模型列表
+
+确认 `settings.json` 中有 `"CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY": "1"`。这个环境变量让 Claude Code 从 API 地址自动拉取可用模型。
 
 ### 不知道选哪个模型
 
-先用 `deepseek/deepseek-v4-flash`，快、便宜、够用。等你熟悉了再试其他模型。
+先用 `deepseek/deepseek-v4-flash`，快、便宜、够用。等你熟悉了再试其他模型。用 `/model` 随时切换。
