@@ -3,6 +3,7 @@ import Base from "../layouts/Base.astro";
 import Stats from "../components/Stats";
 import Ledger from "../components/Ledger";
 import Sponsors from "../components/Sponsors";
+import Design from "../components/Design";
 ---
 
 <Base>
@@ -174,6 +175,9 @@ import Sponsors from "../components/Sponsors";
         </div>
       </div>
     </section>
+
+    <!-- Design Philosophy -->
+    <Design client:load />
 
     <!-- Founder -->
     <section class="mb-24">
