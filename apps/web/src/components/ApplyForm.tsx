@@ -18,7 +18,8 @@ export default function ApplyForm() {
     motivation: "",
   });
 
-  const canSubmit = form.name.trim() && form.school.trim() && form.edu_email.trim();
+  const isEduEmail = form.edu_email.trim().endsWith(".edu.cn") || form.edu_email.trim().endsWith(".edu");
+  const canSubmit = form.name.trim() && form.school.trim() && form.edu_email.trim() && isEduEmail;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -63,30 +64,27 @@ export default function ApplyForm() {
         <div className="text-left text-sm space-y-4 max-w-md mx-auto">
           <p>
             <span className="font-mono text-vermillion font-bold">下一步</span>
-            ：在 GitHub 提交 PR 完成申请。
+            ：到 GitHub 提交 Issue 完成申请。
           </p>
           <ol className="list-decimal pl-5 space-y-2 text-ink-muted">
             <li>
-              Fork{" "}
+              到{" "}
               <a
-                href="https://github.com/jiezi-ai/grant"
+                href="https://github.com/jiezi-ai/grant/issues/new?template=apply.yml"
                 target="_blank"
                 className="text-vermillion hover:text-vermillion-hover"
               >
-                jiezi-ai/grant
+                jiezi-ai/grant 提交 Issue
               </a>
             </li>
             <li>
-              在 <code className="text-xs bg-ink/[0.05] px-1">students/batch-1/</code>{" "}
-              下创建 <code className="text-xs bg-ink/[0.05] px-1">你的用户名.md</code>
-            </li>
-            <li>
-              文件内容只写一行：
+              在表单中填入你的申请码：
               <code className="block mt-1 text-lg font-bold bg-ink/[0.05] px-3 py-2 text-center">
                 {applyCode}
               </code>
             </li>
-            <li>提交 PR</li>
+            <li>等待自动审核，验证邮件会发送到你的 edu 邮箱</li>
+            <li>点击验证链接，API Token 自动发放到邮箱</li>
           </ol>
           <p className="text-ink-muted">
             或者，直接告诉你的 code agent：
@@ -204,8 +202,11 @@ export default function ApplyForm() {
           onChange={(e) => setForm({ ...form, edu_email: e.target.value })}
           className="w-full border border-border px-3 py-2.5 text-sm bg-transparent focus:outline-none focus:border-ink transition-colors"
         />
+        {form.edu_email.trim() && !isEduEmail && (
+          <p className="text-xs text-red-600 mt-1">请使用学校 edu 邮箱（以 .edu.cn 或 .edu 结尾）</p>
+        )}
         <p className="text-xs text-ink-muted mt-1">
-          用于验证学生身份和接收通知，不会公开显示
+          用于验证学生身份和接收资源配置信息，不会公开显示
         </p>
       </div>
 
@@ -231,9 +232,9 @@ export default function ApplyForm() {
       </button>
 
       <p className="text-xs text-ink-muted text-center">
-        提交后你将获得一个申请码，然后到 GitHub 提交 PR 完成申请。
+        提交后你将获得一个申请码，然后到 GitHub 提交 Issue 完成申请。
         <br />
-        个人信息只存储在我们的数据库中，不会出现在公开的 PR 里。
+        个人信息只存储在我们的数据库中，不会出现在公开的 Issue 里。
       </p>
     </form>
   );

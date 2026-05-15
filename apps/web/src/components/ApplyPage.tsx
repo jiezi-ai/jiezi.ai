@@ -43,9 +43,9 @@ export default function ApplyPage() {
       <section className="mb-8">
         <h1 className="text-3xl font-black tracking-tight mb-2">申请资助</h1>
         <p className="text-sm text-ink-muted leading-relaxed">
-          填写信息获取申请码，然后到 GitHub 提交 PR 完成申请。
+          填写信息获取申请码，然后到 GitHub 提交 Issue 完成申请。
           <br />
-          你的个人信息不会出现在公开的 PR 中。
+          你的个人信息不会出现在公开的 Issue 中。
         </p>
       </section>
 
