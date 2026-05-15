@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "../index";
+import { notifyBark } from "../services/bark";
 
 function generateCode(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -71,6 +72,18 @@ app.post("/", async (c) => {
 
   // 更新限频计数
   await cache.set(rateKey, (count || 0) + 1, 3600);
+
+  if (c.env.BARK_KEY) {
+    c.executionCtx.waitUntil(
+      notifyBark(c.env.BARK_KEY, "📋 新申请", [
+        `**${body.name}**（${body.school}）提交了申请`,
+        `- 申请码: \`${applyCode}\``,
+        body.major ? `- 专业: ${body.major}` : "",
+        `- 邮箱: ${emailLower}`,
+        body.motivation ? `- 动机: ${body.motivation}` : "",
+      ].filter(Boolean).join("\n")),
+    );
+  }
 
   return c.json({
     apply_code: applyCode,

@@ -26,6 +26,7 @@ export interface Env {
   GEMINI_API_KEY?: string;
   WECHAT_GROUP_QR_URL?: string;
   ADMIN_TOKEN?: string;
+  BARK_KEY?: string;
   NEWAPI_BASE_URL?: string;
   NEWAPI_STUDENT_URL?: string;
   NEWAPI_ADMIN_USER?: string;

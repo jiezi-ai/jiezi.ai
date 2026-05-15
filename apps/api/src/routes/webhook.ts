@@ -5,6 +5,7 @@ import { reviewApplication } from "../services/gemini";
 import { sendVerificationEmail } from "../services/email";
 import { GitHubClient } from "../services/github";
 import { CacheService } from "../services/cache";
+import { notifyBark } from "../services/bark";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -132,6 +133,17 @@ async function handleIssue(c: Context<{ Bindings: Env }>, body: any) {
         "UPDATE applications SET status = 'rejected', github_id = ?, updated_at = datetime('now') WHERE apply_code = ?",
       ).bind(issueUser, applyCode).run();
 
+      if (c.env.BARK_KEY) {
+        c.executionCtx.waitUntil(
+          notifyBark(c.env.BARK_KEY, "❌ 申请被驳回", [
+            `**${application.name}**（${application.school}）`,
+            `- 申请码: \`${applyCode}\``,
+            `- GitHub: @${issueUser}`,
+            `- 原因: ${review.reason}`,
+          ].join("\n")),
+        );
+      }
+
       return c.json({ ok: true, action: "rejected", reason: review.reason });
     }
 
@@ -161,7 +173,7 @@ async function handleIssue(c: Context<{ Bindings: Env }>, body: any) {
 
           await github.commentIssue(
             issueNumber,
-            `✅ 审核通过！验证邮件已发送到你的 edu 邮箱，请查收并完成验证。\n\n如未收到邮件，请检查垃圾邮件文件夹。\n\n验证完成后本 Issue 将自动关闭。`,
+            `✅ 审核通过！验证邮件已发送到你的 edu 邮箱，请查收并完成验证。\n\n如未收到邮件，请检查垃圾邮件文件夹。\n\n验证完成后本 Issue 将自动关闭。\n\n---\n如果觉得解字计划有帮助，给仓库点个 ⭐ 吧，让更多同学发现它。`,
           );
           console.log(`[issue:${issueNumber}] ${applyCode} approved, email sent`);
         } else {
@@ -179,6 +191,17 @@ async function handleIssue(c: Context<{ Bindings: Env }>, body: any) {
     await c.env.DB.prepare(
       "UPDATE applications SET pr_number = ? WHERE apply_code = ?",
     ).bind(issueNumber, applyCode).run();
+
+    if (c.env.BARK_KEY) {
+      c.executionCtx.waitUntil(
+        notifyBark(c.env.BARK_KEY, "✅ 审核通过", [
+          `**${application.name}**（${application.school}）`,
+          `- 申请码: \`${applyCode}\``,
+          `- GitHub: @${issueUser}`,
+          `- 验证邮件已发送到 ${application.edu_email}`,
+        ].join("\n")),
+      );
+    }
 
     return c.json({ ok: true, action: "approved", github_id: issueUser, apply_code: applyCode });
   } catch (e: any) {

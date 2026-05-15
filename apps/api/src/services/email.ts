@@ -97,6 +97,11 @@ export async function sendGrantEmail(
   <p>扫码加入解字计划交流群，和其他同学一起学习交流：</p>
   ${groupQrUrl ? `<div style="margin: 16px 0; text-align: center;"><img src="${groupQrUrl}" alt="交流群二维码" style="width: 180px; border: 1px solid #e5e2de;" /></div>` : ""}
 
+  <p style="margin-top: 24px; font-size: 14px; text-align: center;">
+    <a href="https://github.com/jiezi-ai/grant" style="color: #b5452a; text-decoration: none;">给解字计划一个 Star ⭐</a>
+    <br><span style="color: #999; font-size: 12px;">让更多大学生发现这个项目</span>
+  </p>
+
   <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 32px 0;" />
 
   <p style="color: #999; font-size: 12px;">

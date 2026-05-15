@@ -3,6 +3,7 @@ import type { Env } from "../index";
 import { GitHubClient } from "../services/github";
 import { CacheService } from "../services/cache";
 import { sendGrantEmail } from "../services/email";
+import { notifyBark } from "../services/bark";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -43,6 +44,16 @@ app.get("/", async (c) => {
   await cache.invalidate("students_list");
   await cache.invalidate("overview");
 
+  if (c.env.BARK_KEY) {
+    c.executionCtx.waitUntil(
+      notifyBark(c.env.BARK_KEY, "📧 邮箱已验证", [
+        `**${record.name}**（${record.school}）`,
+        `- GitHub: @${record.github_id}`,
+        `- 邮箱: ${record.edu_email}`,
+      ].join("\n")),
+    );
+  }
+
   // 3. 自动 close issue + 打 verified label
   if (record.pr_number && c.env.GITHUB_TOKEN) {
     const github = new GitHubClient(
@@ -55,7 +66,7 @@ app.get("/", async (c) => {
     await github.removeLabel(issueNumber, "approved");
     await github.commentIssue(
       issueNumber,
-      `✅ 邮箱验证完成！AI 编程资源已自动发放到你的 edu 邮箱。\n\n欢迎加入解字计划交流群，和其他同学一起学习。`,
+      `✅ 邮箱验证完成！AI 编程资源已自动发放到你的 edu 邮箱。\n\n欢迎加入解字计划交流群，和其他同学一起学习。\n\n如果觉得解字计划有帮助，给仓库点个 ⭐ 吧，让更多同学看到。`,
     );
     await github.closeIssue(issueNumber);
   }
@@ -73,6 +84,16 @@ app.get("/", async (c) => {
           "UPDATE applications SET status = 'fulfilled' WHERE verify_token = ?",
         ).bind(token).run();
         console.log(`[verify] provisioned ${record.github_id}: account + key created, email sent`);
+
+        if (c.env.BARK_KEY) {
+          c.executionCtx.waitUntil(
+            notifyBark(c.env.BARK_KEY, "🎉 资源已发放", [
+              `**${record.name}**（${record.school}）`,
+              `- GitHub: @${record.github_id}`,
+              `- 邮箱: ${record.edu_email}`,
+            ].join("\n")),
+          );
+        }
       }
     } catch (e: any) {
       provisionError = e.message;
@@ -281,6 +302,8 @@ function renderPage(status: string, info: string, groupQrUrl?: string, provision
           📖 配置教程：<a href="https://learn.jiezi.ai/getting-started/setup/">learn.jiezi.ai</a>
         </div>
       `}
+
+      <p style="margin-top: 16px;"><a href="https://github.com/jiezi-ai/grant" style="color: #b5452a; text-decoration: none; font-size: 14px;">⭐ 给项目一个 Star</a> <span style="color: #999; font-size: 13px;">— 帮助更多大学生发现解字计划</span></p>
 
       <p>扫码加入解字计划交流群</p>
       ${groupQrUrl ? `<div class="qr"><img src="${groupQrUrl}" alt="交流群二维码" /></div>` : ""}
