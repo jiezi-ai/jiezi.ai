@@ -15,6 +15,7 @@ import apply from "./routes/apply";
 import students from "./routes/students";
 import admin from "./routes/admin";
 import sponsors from "./routes/sponsors";
+import design from "./routes/design";
 
 export interface Env {
   CACHE: KVNamespace;
@@ -69,6 +70,7 @@ app.route("/api/apply", apply);
 app.route("/api/students", students);
 app.route("/api/admin", admin);
 app.route("/api/sponsors", sponsors);
+app.route("/api/design", design);
 
 app.get("/", (c) => c.json({ name: "jiezi-api", status: "ok" }));
 

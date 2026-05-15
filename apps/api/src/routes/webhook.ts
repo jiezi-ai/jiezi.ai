@@ -233,6 +233,7 @@ async function handlePush(c: Context<{ Bindings: Env }>, body: any) {
     if (file.startsWith("records/changelog")) invalidations.push("changelog");
     if (file.startsWith("records/sponsors")) invalidations.push("sponsors");
     if (file.startsWith("ledger/")) invalidations.push("budget");
+    if (file === "README.md") invalidations.push("design");
   }
 
   const unique = [...new Set(invalidations)];
