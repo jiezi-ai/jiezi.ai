@@ -47,6 +47,11 @@ export default function ApplyPage() {
           <br />
           你的个人信息不会出现在公开的 Issue 中。
         </p>
+
+        <div className="mt-4 bg-ink/[0.03] border-l-2 border-ink/20 px-4 py-3 text-xs text-ink-muted leading-relaxed">
+          <span className="font-medium text-ink">为什么用 GitHub？</span>
+          {" "}GitHub 是全球最大的开源社区，上面有数以百万计的免费项目——下载视频、格式转换、自动化工具，几乎你能想到的需求都有现成的方案。有了 AI coding agent，你只需要告诉它你想做什么，它就能帮你找到并使用这些项目。提一个 Issue 可能是你第一次使用 GitHub，但这不是终点——这里有整个开源世界等你探索。
+        </div>
       </section>
 
       <ApplyForm />
