@@ -53,14 +53,14 @@ export async function reviewApplication(
 ): Promise<ReviewResult> {
   const userMessage = `GitHub 用户: ${githubUsername}\n\n申请信息:\n${applicationInfo}`;
 
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const res = await fetch("https://api.deepseek.com/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "google/gemini-2.0-flash-001",
+      model: "deepseek-v4-pro",
       messages: [
         {
           role: "system",
