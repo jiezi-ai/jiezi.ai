@@ -1,7 +1,9 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { Database } from "bun:sqlite";
 import { GitHubClient } from "./services/github";
 import { CacheService } from "./services/cache";
+import { SqliteDatabase } from "./services/database";
 import overview from "./routes/overview";
 import budget from "./routes/budget";
 import stages from "./routes/stages";
@@ -18,8 +20,8 @@ import sponsors from "./routes/sponsors";
 import design from "./routes/design";
 
 export interface Env {
-  CACHE: KVNamespace;
-  DB: D1Database;
+  DB: SqliteDatabase;
+  CACHE: CacheService;
   GITHUB_OWNER: string;
   GITHUB_REPO: string;
   GITHUB_TOKEN?: string;
@@ -41,17 +43,43 @@ declare module "hono" {
   }
 }
 
+// Initialize singletons
+const dbPath = process.env.DB_PATH || "./data/jiezi.db";
+const sqliteDb = new Database(dbPath, { create: true });
+sqliteDb.exec("PRAGMA journal_mode=WAL;");
+const db = new SqliteDatabase(sqliteDb);
+const cache = new CacheService();
+
+const env: Env = {
+  DB: db,
+  CACHE: cache,
+  GITHUB_OWNER: process.env.GITHUB_OWNER || "jiezi-ai",
+  GITHUB_REPO: process.env.GITHUB_REPO || "grant",
+  GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+  WECHAT_GROUP_QR_URL: process.env.WECHAT_GROUP_QR_URL,
+  ADMIN_TOKEN: process.env.ADMIN_TOKEN,
+  BARK_KEY: process.env.BARK_KEY,
+  NEWAPI_BASE_URL: process.env.NEWAPI_BASE_URL,
+  NEWAPI_STUDENT_URL: process.env.NEWAPI_STUDENT_URL,
+  NEWAPI_ADMIN_USER: process.env.NEWAPI_ADMIN_USER,
+  NEWAPI_ADMIN_PASS: process.env.NEWAPI_ADMIN_PASS,
+};
+
 const app = new Hono<{ Bindings: Env }>();
 
 app.use("*", cors());
 
 app.use("/api/*", async (c, next) => {
+  // Inject env bindings
+  Object.assign(c.env, env);
+
   const github = new GitHubClient(
-    c.env.GITHUB_OWNER,
-    c.env.GITHUB_REPO,
-    c.env.GITHUB_TOKEN,
+    env.GITHUB_OWNER,
+    env.GITHUB_REPO,
+    env.GITHUB_TOKEN,
   );
-  const cache = new CacheService(c.env.CACHE);
   c.set("github", github);
   c.set("cache", cache);
   await next();
@@ -74,4 +102,10 @@ app.route("/api/design", design);
 
 app.get("/", (c) => c.json({ name: "jiezi-api", status: "ok" }));
 
-export default app;
+const port = Number(process.env.API_PORT) || 3100;
+console.log(`jiezi-api listening on :${port}`);
+
+export default {
+  port,
+  fetch: app.fetch,
+};

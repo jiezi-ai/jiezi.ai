@@ -10,6 +10,6 @@ hero:
       link: /getting-started/welcome/
       icon: right-arrow
     - text: 申请资助
-      link: https://jiezi.ai/apply
+      link: https://jieziai.cn/apply
       variant: minimal
 ---

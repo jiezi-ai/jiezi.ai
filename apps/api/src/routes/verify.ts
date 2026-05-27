@@ -1,8 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "../index";
 import { GitHubClient } from "../services/github";
-import { CacheService } from "../services/cache";
-import { sendGrantEmail } from "../services/email";
 import { notifyBark } from "../services/bark";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -40,18 +38,16 @@ app.get("/", async (c) => {
   ).bind(token).run();
 
   // 2. 失效缓存
-  const cache = new CacheService(c.env.CACHE);
+  const cache = c.var.cache;
   await cache.invalidate("students_list");
   await cache.invalidate("overview");
 
   if (c.env.BARK_KEY) {
-    c.executionCtx.waitUntil(
-      notifyBark(c.env.BARK_KEY, "📧 邮箱已验证", [
-        `**${record.name}**（${record.school}）`,
-        `- GitHub: @${record.github_id}`,
-        `- 邮箱: ${record.edu_email}`,
-      ].join("\n")),
-    );
+    void notifyBark(c.env.BARK_KEY, "📧 邮箱已验证", [
+      `**${record.name}**（${record.school}）`,
+      `- GitHub: @${record.github_id}`,
+      `- 邮箱: ${record.edu_email}`,
+    ].join("\n")).catch(console.error);
   }
 
   // 3. 自动 close issue + 打 verified label
@@ -66,49 +62,46 @@ app.get("/", async (c) => {
     await github.removeLabel(issueNumber, "approved");
     await github.commentIssue(
       issueNumber,
-      `✅ 邮箱验证完成！AI 编程资源已自动发放到你的 edu 邮箱。\n\n欢迎加入解字计划交流群，和其他同学一起学习。\n\n如果觉得解字计划有帮助，给仓库点个 ⭐ 吧，让更多同学看到。`,
+      `✅ 邮箱验证完成！AI 编程资源已在验证页面展示。\n\n欢迎加入解字计划交流群，和其他同学一起学习。\n\n如果觉得解字计划有帮助，给仓库点个 ⭐ 吧，让更多同学看到。`,
     );
     await github.closeIssue(issueNumber);
   }
 
-  // 4. 自动创建 New API 账号 + Key + 发邮件
-  let provisionError = "";
+  // 4. 自动创建 New API 账号 + Key
+  let provisionResult: { apiKey?: string; password?: string; baseUrl?: string; error?: string } = {};
   if (c.env.NEWAPI_BASE_URL && c.env.NEWAPI_ADMIN_USER && c.env.NEWAPI_ADMIN_PASS) {
     try {
-      const result = await provisionStudent(c.env, record);
-      if (result.error) {
-        provisionError = result.error;
-        console.error(`[verify] provision failed for ${record.github_id}: ${result.error}`);
+      provisionResult = await provisionStudent(c.env, record);
+      if (provisionResult.error) {
+        console.error(`[verify] provision failed for ${record.github_id}: ${provisionResult.error}`);
       } else {
         await c.env.DB.prepare(
           "UPDATE applications SET status = 'fulfilled' WHERE verify_token = ?",
         ).bind(token).run();
-        console.log(`[verify] provisioned ${record.github_id}: account + key created, email sent`);
+        console.log(`[verify] provisioned ${record.github_id}: account + key created`);
 
         if (c.env.BARK_KEY) {
-          c.executionCtx.waitUntil(
-            notifyBark(c.env.BARK_KEY, "🎉 资源已发放", [
-              `**${record.name}**（${record.school}）`,
-              `- GitHub: @${record.github_id}`,
-              `- 邮箱: ${record.edu_email}`,
-            ].join("\n")),
-          );
+          void notifyBark(c.env.BARK_KEY, "🎉 资源已发放", [
+            `**${record.name}**（${record.school}）`,
+            `- GitHub: @${record.github_id}`,
+            `- 邮箱: ${record.edu_email}`,
+          ].join("\n")).catch(console.error);
         }
       }
     } catch (e: any) {
-      provisionError = e.message;
+      provisionResult.error = e.message;
       console.error(`[verify] provision error for ${record.github_id}:`, e);
     }
   }
 
   const groupQrUrl = c.env.WECHAT_GROUP_QR_URL;
-  return c.html(renderPage("success", record.github_id as string, groupQrUrl, provisionError));
+  return c.html(renderPage("success", record.github_id as string, groupQrUrl, provisionResult));
 });
 
 async function provisionStudent(
   env: Env,
   record: Record<string, unknown>,
-): Promise<{ error?: string; apiKey?: string }> {
+): Promise<{ error?: string; apiKey?: string; password?: string; baseUrl?: string }> {
   const baseUrl = env.NEWAPI_BASE_URL!;
   const githubId = record.github_id as string;
   const email = record.edu_email as string;
@@ -223,29 +216,71 @@ async function provisionStudent(
 
   const apiKey = `sk-${keyData.data.key}`;
 
-  // 9. Send email
-  if (env.RESEND_API_KEY) {
-    await sendGrantEmail(
-      env.RESEND_API_KEY,
-      email,
-      name,
-      githubId,
-      password,
-      env.NEWAPI_STUDENT_URL || baseUrl,
-      apiKey,
-      env.WECHAT_GROUP_QR_URL,
-    );
-  }
-
-  return { apiKey };
+  return { apiKey, password, baseUrl: env.NEWAPI_STUDENT_URL || baseUrl };
 }
 
-function renderPage(status: string, info: string, groupQrUrl?: string, provisionError?: string): string {
+function renderPage(status: string, info: string, groupQrUrl?: string, provisionResult?: { error?: string; apiKey?: string; password?: string; baseUrl?: string }): string {
   const title = status === "success" ? "验证成功" :
     status === "already" ? "已验证" :
     status === "expired" ? "链接已过期" : "验证失败";
 
   const showQR = status === "success" || status === "already";
+
+  let bodyHtml = `<p>${info}</p>`;
+  if (showQR) {
+    if (!provisionResult?.error && provisionResult?.apiKey) {
+      const baseUrl = provisionResult.baseUrl || "";
+      const apiKey = provisionResult.apiKey || "";
+      const password = provisionResult.password || "";
+      const qrHtml = groupQrUrl
+        ? `<div class="qr"><img src="${groupQrUrl}" alt="交流群二维码" /></div>`
+        : "";
+      bodyHtml = `
+      <p>@${info}，你的 edu 邮箱已验证。</p>
+
+      <div class="info-box" style="border-left-color: #b5452a; text-align: left;">
+        <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; text-align: center;">⚠️ 以下信息只会显示一次，请立即保存</h3>
+        <hr style="border: none; border-top: 1px solid #e5e2de; margin: 12px 0;">
+        <strong>API 地址：</strong><code style="word-break: break-all;">${baseUrl}</code><br>
+        <strong>API Key：</strong><code style="word-break: break-all;">${apiKey}</code><br>
+        <hr style="border: none; border-top: 1px solid #e5e2de; margin: 12px 0;">
+        <strong>管理后台：</strong><code style="word-break: break-all;">${baseUrl}</code><br>
+        <strong>用户名：</strong><code>${info}</code><br>
+        <strong>密码：</strong><code>${password}</code>
+      </div>
+
+      <p><a href="https://learn.jieziai.cn/getting-started/setup/" style="color: #b5452a;">📖 配置教程 → learn.jieziai.cn</a></p>
+
+      <p style="margin-top: 24px;">扫码加入解字计划交流群</p>
+      ${qrHtml}
+      <p class="hint">和其他同学一起交流 AI 编程</p>
+
+      <p style="margin-top: 24px;"><a href="https://github.com/jiezi-ai/grant" style="color: #b5452a; text-decoration: none; font-size: 14px;">⭐ 给项目一个 Star</a> <span style="color: #999; font-size: 13px;">— 帮助更多大学生发现解字计划</span></p>
+      `;
+    } else {
+      const errorHtml = provisionResult?.error
+        ? `<p>AI 资源自动发放遇到问题，管理员将手动处理。</p><p class="hint">${provisionResult.error}</p>`
+        : `<div class="info-box" style="border-left-color: #b5452a;">
+            ✅ AI 编程资源已自动发放<br>
+            请使用申请时填写的凭据登录。<br>
+            📖 配置教程：<a href="https://learn.jieziai.cn/getting-started/setup/">learn.jieziai.cn</a>
+          </div>`;
+      const qrHtml = groupQrUrl
+        ? `<div class="qr"><img src="${groupQrUrl}" alt="交流群二维码" /></div>`
+        : "";
+      bodyHtml = `
+      <p>@${info}，你的 edu 邮箱已验证。</p>
+
+      ${errorHtml}
+
+      <p>扫码加入解字计划交流群</p>
+      ${qrHtml}
+      <p class="hint">和其他同学一起交流 AI 编程</p>
+
+      <p style="margin-top: 24px;"><a href="https://github.com/jiezi-ai/grant" style="color: #b5452a; text-decoration: none; font-size: 14px;">⭐ 给项目一个 Star</a> <span style="color: #999; font-size: 13px;">— 帮助更多大学生发现解字计划</span></p>
+      `;
+    }
+  }
 
   return `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -289,28 +324,7 @@ function renderPage(status: string, info: string, groupQrUrl?: string, provision
     <div class="status">${status === "success" ? "✓" : status === "already" ? "✓" : status === "expired" ? "⏰" : "✕"}</div>
     <h1${status === "error" || status === "expired" ? ' class="error"' : ""}>${title}</h1>
 
-    ${showQR ? `
-      <p>@${info}，你的 edu 邮箱已验证。</p>
-
-      ${provisionError ? `
-        <p>AI 资源自动发放遇到问题，管理员将手动处理。</p>
-        <p class="hint">${provisionError}</p>
-      ` : `
-        <div class="info-box">
-          ✅ AI 编程资源已自动发放<br>
-          📧 配置信息已发送到你的 edu 邮箱<br>
-          📖 配置教程：<a href="https://learn.jiezi.ai/getting-started/setup/">learn.jiezi.ai</a>
-        </div>
-      `}
-
-      <p style="margin-top: 16px;"><a href="https://github.com/jiezi-ai/grant" style="color: #b5452a; text-decoration: none; font-size: 14px;">⭐ 给项目一个 Star</a> <span style="color: #999; font-size: 13px;">— 帮助更多大学生发现解字计划</span></p>
-
-      <p>扫码加入解字计划交流群</p>
-      ${groupQrUrl ? `<div class="qr"><img src="${groupQrUrl}" alt="交流群二维码" /></div>` : ""}
-      <p class="hint">和其他同学一起交流 AI 编程</p>
-    ` : `
-      <p>${info}</p>
-    `}
+    ${bodyHtml}
 
     <p class="brand">解字计划 JIEZI GRANT</p>
   </div>

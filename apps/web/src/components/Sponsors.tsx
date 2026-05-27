@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API = import.meta.env.PUBLIC_API_URL || "https://api.jiezi.ai";
+const API = import.meta.env.PUBLIC_API_URL || "https://api.jieziai.cn";
 
 interface Sponsor {
   name: string;

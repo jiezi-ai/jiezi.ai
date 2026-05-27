@@ -51,7 +51,7 @@ async function handleIssue(c: Context<{ Bindings: Env }>, body: any) {
     console.warn(`[issue:${issueNumber}] no apply code found`);
     await github.commentIssue(
       issueNumber,
-      "⚠️ 未找到有效的申请码（格式：`JZ-XXXX`）。\n\n还没有申请码？请先到 [jiezi.ai/apply](https://jiezi.ai/apply) 提交申请。",
+      "⚠️ 未找到有效的申请码（格式：`JZ-XXXX`）。\n\n还没有申请码？请先到 [jieziai.cn/apply](https://jieziai.cn/apply) 提交申请。",
     );
     return c.json({ ok: true, action: "no_apply_code" });
   }
@@ -65,14 +65,14 @@ async function handleIssue(c: Context<{ Bindings: Env }>, body: any) {
       console.warn(`[issue:${issueNumber}] apply code ${applyCode} not found in DB`);
       await github.commentIssue(
         issueNumber,
-        `⚠️ 申请码 \`${applyCode}\` 不存在。请检查是否正确，或到 [jiezi.ai/apply](https://jiezi.ai/apply) 重新申请。`,
+        `⚠️ 申请码 \`${applyCode}\` 不存在。请检查是否正确，或到 [jieziai.cn/apply](https://jieziai.cn/apply) 重新申请。`,
       );
       return c.json({ ok: true, action: "invalid_code" });
     }
 
     if (application.status !== "draft") {
       const statusMsg: Record<string, string> = {
-        rejected: "你的申请已被驳回，请到 [jiezi.ai/apply](https://jiezi.ai/apply) 修改信息后重新提交 Issue。",
+        rejected: "你的申请已被驳回，请到 [jieziai.cn/apply](https://jieziai.cn/apply) 修改信息后重新提交 Issue。",
         approved: "你的申请正在处理中。",
         emailed: "验证邮件已发送，请查收 edu 邮箱。",
         verified: "你已完成验证。",
@@ -124,7 +124,7 @@ async function handleIssue(c: Context<{ Bindings: Env }>, body: any) {
     if (!review.pass) {
       await github.commentIssue(
         issueNumber,
-        `申请未通过审核。\n\n**原因**：${review.reason}\n\n请到 [jiezi.ai/apply](https://jiezi.ai/apply?code=${applyCode}) 修改信息后重新提交 Issue。`,
+        `申请未通过审核。\n\n**原因**：${review.reason}\n\n请到 [jieziai.cn/apply](https://jieziai.cn/apply?code=${applyCode}) 修改信息后重新提交 Issue。`,
       );
       await github.removeLabel(issueNumber, "reviewing");
       await github.addLabels(issueNumber, ["rejected"]);
@@ -133,16 +133,14 @@ async function handleIssue(c: Context<{ Bindings: Env }>, body: any) {
         "UPDATE applications SET status = 'rejected', github_id = ?, updated_at = datetime('now') WHERE apply_code = ?",
       ).bind(issueUser, applyCode).run();
 
-      if (c.env.BARK_KEY) {
-        c.executionCtx.waitUntil(
-          notifyBark(c.env.BARK_KEY, "❌ 申请被驳回", [
-            `**${application.name}**（${application.school}）`,
-            `- 申请码: \`${applyCode}\``,
-            `- GitHub: @${issueUser}`,
-            `- 原因: ${review.reason}`,
-          ].join("\n")),
-        );
-      }
+    if (c.env.BARK_KEY) {
+      void notifyBark(c.env.BARK_KEY, "❌ 申请被驳回", [
+        `**${application.name}**（${application.school}）`,
+        `- 申请码: \`${applyCode}\``,
+        `- GitHub: @${issueUser}`,
+        `- 原因: ${review.reason}`,
+      ].join("\n")).catch(console.error);
+    }
 
       return c.json({ ok: true, action: "rejected", reason: review.reason });
     }
@@ -151,7 +149,7 @@ async function handleIssue(c: Context<{ Bindings: Env }>, body: any) {
     await github.addLabels(issueNumber, ["approved"]);
 
     const verifyToken = crypto.randomUUID();
-    const verifyUrl = `https://api.jiezi.ai/api/verify?token=${verifyToken}`;
+    const verifyUrl = `https://api.jieziai.cn/api/verify?token=${verifyToken}`;
 
     await c.env.DB.prepare(
       "UPDATE applications SET status = 'approved', github_id = ?, verify_token = ?, updated_at = datetime('now') WHERE apply_code = ?",
@@ -193,14 +191,12 @@ async function handleIssue(c: Context<{ Bindings: Env }>, body: any) {
     ).bind(issueNumber, applyCode).run();
 
     if (c.env.BARK_KEY) {
-      c.executionCtx.waitUntil(
-        notifyBark(c.env.BARK_KEY, "✅ 审核通过", [
-          `**${application.name}**（${application.school}）`,
-          `- 申请码: \`${applyCode}\``,
-          `- GitHub: @${issueUser}`,
-          `- 验证邮件已发送到 ${application.edu_email}`,
-        ].join("\n")),
-      );
+      void notifyBark(c.env.BARK_KEY, "✅ 审核通过", [
+        `**${application.name}**（${application.school}）`,
+        `- 申请码: \`${applyCode}\``,
+        `- GitHub: @${issueUser}`,
+        `- 验证邮件已发送到 ${application.edu_email}`,
+      ].join("\n")).catch(console.error);
     }
 
     return c.json({ ok: true, action: "approved", github_id: issueUser, apply_code: applyCode });

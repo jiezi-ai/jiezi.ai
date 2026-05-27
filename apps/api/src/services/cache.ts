@@ -1,24 +1,33 @@
+interface CacheEntry {
+  value: string;
+  expiry: number; // timestamp ms, 0 = no expiry
+}
+
 export class CacheService {
-  constructor(private kv: KVNamespace) {}
+  private store = new Map<string, CacheEntry>();
 
   async get<T>(key: string): Promise<T | null> {
-    const val = await this.kv.get(key, "text");
-    if (!val) return null;
-    return JSON.parse(val) as T;
+    const entry = this.store.get(key);
+    if (!entry) return null;
+    if (entry.expiry > 0 && Date.now() > entry.expiry) {
+      this.store.delete(key);
+      return null;
+    }
+    return JSON.parse(entry.value) as T;
   }
 
   async set<T>(key: string, value: T, ttlSeconds?: number): Promise<void> {
-    const opts: KVNamespacePutOptions = {};
-    if (ttlSeconds) opts.expirationTtl = ttlSeconds;
-    await this.kv.put(key, JSON.stringify(value), opts);
+    const expiry = ttlSeconds ? Date.now() + ttlSeconds * 1000 : 0;
+    this.store.set(key, { value: JSON.stringify(value), expiry });
   }
 
   async invalidate(key: string): Promise<void> {
-    await this.kv.delete(key);
+    this.store.delete(key);
   }
 
   async invalidatePrefix(prefix: string): Promise<void> {
-    const list = await this.kv.list({ prefix });
-    await Promise.all(list.keys.map((k) => this.kv.delete(k.name)));
+    for (const key of this.store.keys()) {
+      if (key.startsWith(prefix)) this.store.delete(key);
+    }
   }
 }

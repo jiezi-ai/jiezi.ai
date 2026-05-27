@@ -12,7 +12,7 @@ export default defineConfig({
       social: [
         { icon: "github", label: "GitHub", href: "https://github.com/jiezi-ai/grant" },
         { icon: "x.com", label: "X", href: "https://x.com/yan5xu" },
-        { icon: "external", label: "jiezi.ai", href: "https://jiezi.ai" },
+        { icon: "external", label: "jieziai.cn", href: "https://jieziai.cn" },
       ],
       sidebar: [
         {

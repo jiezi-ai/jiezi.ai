@@ -13,7 +13,7 @@ export async function notifyBark(
         title,
         markdown,
         group: opts?.group ?? "jiezi",
-        icon: opts?.icon ?? "https://jiezi.ai/favicon.svg",
+        icon: opts?.icon ?? "https://jieziai.cn/favicon.svg",
         url: opts?.url,
         level: opts?.level ?? "active",
         isArchive: "1",

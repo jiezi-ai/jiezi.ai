@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import StudentTicker from "./StudentTicker";
 
 const API_BASE =
-  (import.meta as any).env?.PUBLIC_API_URL || "https://api.jiezi.ai";
+  (import.meta as any).env?.PUBLIC_API_URL || "https://api.jieziai.cn";
 
 interface Batch {
   id: number;

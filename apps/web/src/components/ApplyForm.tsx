@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const API_BASE =
-  (import.meta as any).env?.PUBLIC_API_URL || "https://api.jiezi.ai";
+  (import.meta as any).env?.PUBLIC_API_URL || "https://api.jieziai.cn";
 
 type Step = "form" | "submitting" | "success" | "error" | "duplicate";
 

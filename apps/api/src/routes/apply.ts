@@ -16,7 +16,7 @@ const app = new Hono<{ Bindings: Env }>();
 // 提交申请表单
 app.post("/", async (c) => {
   // IP 限频
-  const ip = c.req.header("cf-connecting-ip") || "unknown";
+  const ip = c.req.header("x-forwarded-for")?.split(",")[0]?.trim() || c.req.header("cf-connecting-ip") || "unknown";
   const rateKey = `rate:apply:${ip}`;
   const { cache } = c.var;
   const count = await cache.get<number>(rateKey);
@@ -74,15 +74,13 @@ app.post("/", async (c) => {
   await cache.set(rateKey, (count || 0) + 1, 3600);
 
   if (c.env.BARK_KEY) {
-    c.executionCtx.waitUntil(
-      notifyBark(c.env.BARK_KEY, "📋 新申请", [
-        `**${body.name}**（${body.school}）提交了申请`,
-        `- 申请码: \`${applyCode}\``,
-        body.major ? `- 专业: ${body.major}` : "",
-        `- 邮箱: ${emailLower}`,
-        body.motivation ? `- 动机: ${body.motivation}` : "",
-      ].filter(Boolean).join("\n")),
-    );
+    void notifyBark(c.env.BARK_KEY, "📋 新申请", [
+      `**${body.name}**（${body.school}）提交了申请`,
+      `- 申请码: \`${applyCode}\``,
+      body.major ? `- 专业: ${body.major}` : "",
+      `- 邮箱: ${emailLower}`,
+      body.motivation ? `- 动机: ${body.motivation}` : "",
+    ].filter(Boolean).join("\n")).catch(console.error);
   }
 
   return c.json({
