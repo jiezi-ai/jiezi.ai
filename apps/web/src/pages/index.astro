@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Stats from "../components/Stats";
+import HomeRank from "../components/HomeRank";
 import Ledger from "../components/Ledger";
 import Sponsors from "../components/Sponsors";
 import Design from "../components/Design";
@@ -39,6 +40,9 @@ import Design from "../components/Design";
 
     <!-- Stats (client-side, fetches from API) -->
     <Stats client:load />
+
+    <!-- Top explorers -->
+    <HomeRank client:load />
 
     <!-- Why -->
     <section class="mb-24">

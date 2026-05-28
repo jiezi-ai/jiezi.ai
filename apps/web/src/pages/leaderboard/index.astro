@@ -1,0 +1,22 @@
+---
+import Base from "../../layouts/Base.astro";
+import Leaderboard from "../../components/Leaderboard";
+---
+
+<Base title="排行榜 — 解字计划" description="解字计划 Token 消耗排行榜：探索者排行、模型热力、学校排行、使用趋势。">
+  <main class="max-w-3xl mx-auto px-6 pt-8 pb-24">
+    <section class="pt-10 pb-6 mb-4">
+      <div class="flex items-baseline gap-3 mb-2">
+        <a href="/" class="text-sm text-ink-muted hover:text-vermillion font-mono transition-colors">← 首页</a>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-black tracking-tight">排行榜</h1>
+      <p class="text-sm text-ink-muted mt-2">看看大家在用 AI 做什么。</p>
+    </section>
+
+    <Leaderboard client:load />
+
+    <footer class="mt-24 pt-8 border-t border-border text-center text-xs text-ink-muted">
+      <p>数据每 5 分钟更新 · 姓名已脱敏 · <a href="/" class="text-vermillion hover:underline">返回首页</a></p>
+    </footer>
+  </main>
+</Base>

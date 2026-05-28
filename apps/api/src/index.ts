@@ -18,6 +18,7 @@ import students from "./routes/students";
 import admin from "./routes/admin";
 import sponsors from "./routes/sponsors";
 import design from "./routes/design";
+import leaderboard from "./routes/leaderboard";
 
 export interface Env {
   DB: SqliteDatabase;
@@ -99,6 +100,7 @@ app.route("/api/students", students);
 app.route("/api/admin", admin);
 app.route("/api/sponsors", sponsors);
 app.route("/api/design", design);
+app.route("/api/leaderboard", leaderboard);
 
 app.get("/", (c) => c.json({ name: "jiezi-api", status: "ok" }));
 

@@ -2,17 +2,19 @@
 
 [解字计划](https://github.com/jiezi-ai/grant)的官网和后端服务。
 
-- **官网**：[jiezi.ai](https://jiezi.ai) — 项目介绍、申请入口、数据展示
-- **学堂**：[learn.jiezi.ai](https://learn.jiezi.ai) — AI 编程教程和学习资源
-- **API**：[api.jiezi.ai](https://api.jiezi.ai) — 申请、审核、验证、资源发放
+- **官网**：[jieziai.cn](https://jieziai.cn) — 项目介绍、申请入口、数据展示
+- **学堂**：[learn.jieziai.cn](https://learn.jieziai.cn) — AI 编程教程和学习资源
+- **API**：[api.jieziai.cn](https://api.jieziai.cn) — 申请、审核、验证、资源发放
+
+> 旧域名 jiezi.ai / learn.jiezi.ai 已 301 跳转到 jieziai.cn / learn.jieziai.cn。
 
 ## 架构
 
 ```
 apps/
-├── web/       Astro SSG → Cloudflare Pages (jiezi.ai)
-├── learn/     Astro Starlight → Cloudflare Pages (learn.jiezi.ai)
-└── api/       Hono → Cloudflare Workers (api.jiezi.ai)
+├── web/       Astro SSG → 腾讯云 COS + CDN (jieziai.cn)
+├── learn/     Astro Starlight → 腾讯云 COS + CDN (learn.jieziai.cn)
+└── api/       Hono + Bun → jiezi-api 服务器 :3100 (api.jieziai.cn)
 
 packages/
 └── shared/    共享 TypeScript 类型
@@ -22,7 +24,7 @@ packages/
 
 - **前端**：Astro + React islands + Tailwind CSS v4
 - **学堂**：Astro Starlight
-- **API**：Hono (Cloudflare Workers) + D1 (SQLite) + KV (缓存) + R2 (静态资源)
+- **API**：Hono + Bun + SQLite（运行在 jiezi-api 服务器，Caddy 反代）
 - **邮件**：Resend
 - **LLM 审核**：OpenRouter (Gemini)
 - **资源发放**：New API (LLM 网关) + OpenRouter
@@ -30,7 +32,7 @@ packages/
 ## 申请流程（全自动）
 
 ```
-学生填表 (jiezi.ai/apply)
+学生填表 (jieziai.cn/apply)
   → 提交 GitHub Issue (申请码)
   → webhook 触发 → Gemini 审核
   → 验证邮件 → 学生点击链接
@@ -45,9 +47,9 @@ packages/
 ```bash
 pnpm install
 
-# API
-pnpm --filter api dev        # 本地开发
-pnpm --filter api test       # 运行测试
+# API（需要 Bun 运行时）
+pnpm --filter api dev        # 本地开发（bun --watch）
+pnpm --filter api test       # 运行测试（vitest）
 
 # 官网
 pnpm --filter web dev        # 本地开发
@@ -61,14 +63,18 @@ pnpm --filter learn build    # 构建
 ## 部署
 
 ```bash
-# API (Cloudflare Workers)
-cd apps/api && npx wrangler deploy
+# API（Bun — 同步到 jiezi-api 服务器后重启）
+ssh jiezi-api "cd /opt/jiezi-api && git pull && sudo systemctl restart jiezi-api"
 
-# 官网 (Cloudflare Pages)
-cd apps/web && pnpm build && npx wrangler pages deploy dist --project-name jiezi-web
+# 主站（腾讯云 COS + CDN）
+cd apps/web && pnpm build
+coscmd -c /tmp/cos-jiezi-web.conf upload -rs dist/ /
+tccli cdn PurgePathCache --cli-unfold-argument --Paths 'https://jieziai.cn/' --FlushType flush
 
-# 学堂 (Cloudflare Pages)
-cd apps/learn && pnpm build && npx wrangler pages deploy dist --project-name jiezi-learn
+# 学堂（腾讯云 COS + CDN）
+cd apps/learn && pnpm build
+coscmd -c /tmp/cos-jiezi-learn.conf upload -rs dist/ /
+tccli cdn PurgePathCache --cli-unfold-argument --Paths 'https://learn.jieziai.cn/' --FlushType flush
 ```
 
 ## 相关仓库
