@@ -22,12 +22,21 @@ packages/
 
 ## 技术栈
 
-- **前端**：Astro + React islands + Tailwind CSS v4
+- **前端**：Astro + React islands + Tailwind CSS v4 + visx（图表）
 - **学堂**：Astro Starlight
 - **API**：Hono + Bun + SQLite（运行在 jiezi-api 服务器，Caddy 反代）
 - **邮件**：Resend
 - **LLM 审核**：OpenRouter (Gemini)
 - **资源发放**：New API (LLM 网关) + OpenRouter
+
+## 页面
+
+| 路由 | 说明 |
+|------|------|
+| `/` | 首页：项目介绍、资助进度、探索者 Top 5、三阶段、申请入口 |
+| `/apply` | 申请表单 / 进度查询 |
+| `/leaderboard` | 排行榜：探索者排行、模型热力（Pie）、学校排行、使用趋势（Area） |
+| `/admin` | 管理后台（需 Token） |
 
 ## 申请流程（全自动）
 
