@@ -117,6 +117,7 @@ app.post("/:code", async (c) => {
     motivation: record.motivation,
     github_id: record.github_id,
     created_at: record.created_at,
+    resend_count: record.resend_count ?? 0,
   });
 });
 

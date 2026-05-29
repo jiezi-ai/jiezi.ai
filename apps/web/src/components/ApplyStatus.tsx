@@ -12,6 +12,7 @@ interface ApplicationData {
   motivation: string;
   github_id: string | null;
   created_at: string;
+  resend_count?: number;
 }
 
 const STATUS_LABELS: Record<string, { label: string; desc: string }> = {
@@ -57,6 +58,8 @@ export default function ApplyStatus({ code }: { code: string }) {
     grade: "",
     motivation: "",
   });
+  const [resending, setResending] = useState(false);
+  const [resendMsg, setResendMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
   async function handleQuery(e: React.FormEvent) {
     e.preventDefault();
@@ -243,6 +246,51 @@ export default function ApplyStatus({ code }: { code: string }) {
             >
               修改信息
             </button>
+          )}
+
+          {data.status === "fulfilled" && (
+            <div className="mt-4 pt-4 border-t border-border/50">
+              <button
+                onClick={async () => {
+                  setResending(true);
+                  setResendMsg(null);
+                  try {
+                    const res = await fetch(`${API_BASE}/api/resend`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ apply_code: code, edu_email: email }),
+                    });
+                    const result = await res.json();
+                    if (res.ok) {
+                      setResendMsg({ type: "ok", text: result.message || "已发送" });
+                      setData({ ...data, resend_count: result.resend_count });
+                    } else {
+                      setResendMsg({ type: "err", text: result.error || "发送失败" });
+                    }
+                  } catch {
+                    setResendMsg({ type: "err", text: "网络错误" });
+                  } finally {
+                    setResending(false);
+                  }
+                }}
+                disabled={resending || (data.resend_count ?? 0) >= 3}
+                className="w-full border border-vermillion text-vermillion text-sm py-2.5 hover:bg-vermillion/[0.04] transition-colors disabled:opacity-40"
+              >
+                {resending
+                  ? "发送中..."
+                  : (data.resend_count ?? 0) >= 3
+                    ? "已达最大重发次数"
+                    : "重新发送账号信息到邮箱"}
+              </button>
+              <p className="text-xs text-ink-muted text-center mt-2">
+                每天最多 1 次，累计最多 3 次（已用 {data.resend_count ?? 0} 次）
+              </p>
+              {resendMsg && (
+                <p className={`text-sm text-center mt-2 ${resendMsg.type === "ok" ? "text-green-600" : "text-vermillion"}`}>
+                  {resendMsg.text}
+                </p>
+              )}
+            </div>
           )}
         </div>
       ) : (

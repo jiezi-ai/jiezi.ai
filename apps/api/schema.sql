@@ -16,7 +16,9 @@ CREATE TABLE applications (
   verified_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
-  status TEXT NOT NULL DEFAULT 'draft'
+  status TEXT NOT NULL DEFAULT 'draft',
+  resend_count INTEGER NOT NULL DEFAULT 0,
+  last_resend_at TEXT
 );
 
 CREATE TABLE IF NOT EXISTS sync_log (

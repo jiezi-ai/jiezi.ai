@@ -19,6 +19,7 @@ import admin from "./routes/admin";
 import sponsors from "./routes/sponsors";
 import design from "./routes/design";
 import leaderboard from "./routes/leaderboard";
+import resend from "./routes/resend";
 
 export interface Env {
   DB: SqliteDatabase;
@@ -50,6 +51,14 @@ const sqliteDb = new Database(dbPath, { create: true });
 sqliteDb.exec("PRAGMA journal_mode=WAL;");
 const db = new SqliteDatabase(sqliteDb);
 const cache = new CacheService();
+
+// Migrations
+try {
+  sqliteDb.exec("ALTER TABLE applications ADD COLUMN resend_count INTEGER NOT NULL DEFAULT 0;");
+} catch { /* column already exists */ }
+try {
+  sqliteDb.exec("ALTER TABLE applications ADD COLUMN last_resend_at TEXT;");
+} catch { /* column already exists */ }
 
 const env: Env = {
   DB: db,
@@ -101,6 +110,7 @@ app.route("/api/admin", admin);
 app.route("/api/sponsors", sponsors);
 app.route("/api/design", design);
 app.route("/api/leaderboard", leaderboard);
+app.route("/api/resend", resend);
 
 app.get("/", (c) => c.json({ name: "jiezi-api", status: "ok" }));
 
