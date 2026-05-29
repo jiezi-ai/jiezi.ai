@@ -153,3 +153,11 @@ echo $ANTHROPIC_BASE_URL
 ### 不知道选哪个模型
 
 先用 `deepseek/deepseek-v4-flash`，快、便宜、够用。等你熟悉了再试其他模型。用 `/model` 随时切换。
+
+### 找不到配置邮件 / 忘记密码
+
+访问 [jieziai.cn/apply?code=你的申请码](https://jieziai.cn/apply)，输入 edu 邮箱验证身份后，在状态页面点击「重新发送账号信息到邮箱」。
+
+系统会重置你的密码并将新的 API Key、用户名、密码发送到你的 edu 邮箱。旧密码会立即失效。
+
+限制：每天最多 1 次，累计最多 3 次。超过次数请联系管理员。

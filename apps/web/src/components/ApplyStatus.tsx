@@ -250,6 +250,9 @@ export default function ApplyStatus({ code }: { code: string }) {
 
           {data.status === "fulfilled" && (
             <div className="mt-4 pt-4 border-t border-border/50">
+              <p className="text-xs text-ink-muted mb-3">
+                找不到配置邮件或忘记密码？可以重新发送到你的 edu 邮箱（密码会被重置）。
+              </p>
               <button
                 onClick={async () => {
                   setResending(true);
